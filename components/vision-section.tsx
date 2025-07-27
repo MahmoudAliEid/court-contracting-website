@@ -82,9 +82,9 @@ export function VisionSection() {
               <div className="relative">
                 <div className="aspect-[4/3] bg-gradient-to-br from-primary/20 to-purple-500/20 rounded-3xl overflow-hidden">
                   <img
-                    src="/placeholder.svg?height=400&width=600"
+                    src="/our_Vision.png?height=400&width=600"
                     alt="Our Vision"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-fit"
                   />
                 </div>
                 <div className="absolute -top-6 -right-6 w-32 h-32 bg-primary/10 rounded-full blur-2xl" />
@@ -93,7 +93,7 @@ export function VisionSection() {
             </div>
 
             <div className={`${language === "ar" ? "slide-in-left" : "slide-in-right"}`}>
-              <div className={`space-y-6 ${language === "ar" ? "text-right" : "text-left"}`}>
+              <div className={`space-y-6 text-start`}>
                 <h3 className="text-2xl md:text-3xl font-bold">
                   {language === "ar"
                     ? "نحو مستقبل أفضل في عالم البناء والتشييد"

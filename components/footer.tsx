@@ -41,9 +41,9 @@ export function Footer() {
   ]
 
   return (
-    <footer className="footer-theme no-overlap">
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <footer className="footer-theme no-overlap relative z-10">
+      <div className="container mx-auto px-4 py-10 md:py-14 lg:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center space-x-2">
@@ -114,19 +114,19 @@ export function Footer() {
             </h3>
             <div className="space-y-3">
               <div
-                className={`flex items-center ${language === "ar" ? "flex-row-reverse space-x-reverse" : "space-x-3"}`}
+                className={`flex items-center gap-2 `}
               >
                 <Phone className="h-4 w-4 text-purple-600 dark:text-primary flex-shrink-0" />
                 <span className="text-gray-600 dark:text-muted-foreground">0566397317</span>
               </div>
               <div
-                className={`flex items-center ${language === "ar" ? "flex-row-reverse space-x-reverse" : "space-x-3"}`}
+                className={`flex items-center gap-2 `}
               >
                 <Mail className="h-4 w-4 text-purple-600 dark:text-primary flex-shrink-0" />
                 <span className="text-gray-600 dark:text-muted-foreground">COURT.CO@HOTMAIL.COM</span>
               </div>
               <div
-                className={`flex items-center ${language === "ar" ? "flex-row-reverse space-x-reverse" : "space-x-3"}`}
+                className={`flex items-center gap-2 `}
               >
                 <MapPin className="h-4 w-4 text-purple-600 dark:text-primary flex-shrink-0" />
                 <span className="text-gray-600 dark:text-muted-foreground">
@@ -140,7 +140,7 @@ export function Footer() {
         <Separator className="my-8 bg-gray-200 dark:bg-border" />
 
         {/* Bottom Footer */}
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 w-full">
           <div className="text-gray-600 dark:text-muted-foreground text-sm">
             © {new Date().getFullYear()} {language === "ar" ? "شركة كورت للمقاولات" : "Court Contracting Company"}.{" "}
             {t("footer.rights")}.

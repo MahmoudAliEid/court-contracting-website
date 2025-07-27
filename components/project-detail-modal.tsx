@@ -60,6 +60,7 @@ export function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailMo
       <DialogContent
         className={`
           max-w-5xl w-[95vw] max-h-[95vh] 
+          z-[1000] rounded-lg shadow-lg
           bg-white dark:bg-background border-gray-200 dark:border-border
           ${language === "ar" ? "rtl" : "ltr"} overflow-y-auto
         `}
@@ -89,7 +90,7 @@ export function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailMo
           </div>
         </DialogHeader>
 
-        <div className="overflow-y-auto max-h-[calc(95vh-120px)] p-4 sm:p-6">
+        <div className=" max-h-[calc(95vh-120px)] p-4 sm:p-6">
           <div className="space-y-6">
             {/* Image Gallery */}
             <div className="space-y-4">
@@ -199,7 +200,7 @@ export function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailMo
             </div>
 
             {/* Action Buttons */}
-            <div className={`flex flex-col sm:flex-row gap-3 pt-4 ${language === "ar" ? "sm:flex-row-reverse" : ""}`}>
+            <div className={`flex flex-col sm:flex-row gap-3 py-4 ${language === "ar" ? "sm:flex-row-reverse" : ""}`}>
               <Button
                 className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
                 onClick={() => {

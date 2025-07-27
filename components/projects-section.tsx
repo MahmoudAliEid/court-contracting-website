@@ -44,7 +44,7 @@ export function ProjectsSection() {
       id: 1,
       title: language === "ar" ? "مؤسسة النقد السعودي البنك المركزي" : "Saudi Central Bank",
       category: "commercial",
-      image: "/placeholder.svg?height=300&width=400",
+      image: "/court (1).jpeg?height=300&width=400",
       description:
         language === "ar"
           ? "مشروع تطوير وتجديد مبنى البنك المركزي"
@@ -68,7 +68,7 @@ export function ProjectsSection() {
       id: 2,
       title: language === "ar" ? "المستشفى السعودي البريطاني" : "Saudi British Hospital",
       category: "commercial",
-      image: "/placeholder.svg?height=300&width=400",
+      image: "/court (2).jpeg?height=300&width=400",
       description: language === "ar" ? "أعمال التشطيب والتجهيز الطبي" : "Medical finishing and equipment works",
       fullDescription:
         language === "ar"
@@ -83,7 +83,7 @@ export function ProjectsSection() {
       id: 3,
       title: language === "ar" ? "قصر سمو الأمير محمد بن بندر" : "Prince Mohammed bin Bandar Palace",
       category: "residential",
-      image: "/placeholder.svg?height=300&width=400",
+      image: "/court (3).jpeg?height=300&width=400",
       description:
         language === "ar" ? "قصر فاخر بتصميم معماري متميز" : "Luxury palace with distinctive architectural design",
       fullDescription:
@@ -99,7 +99,7 @@ export function ProjectsSection() {
       id: 4,
       title: language === "ar" ? "عمائر سنتريا بالعليا" : "Centria Buildings in Al-Olaya",
       category: "commercial",
-      image: "/placeholder.svg?height=300&width=400",
+      image: "/court (4).jpeg?height=300&width=400",
       description: language === "ar" ? "مجمع تجاري وسكني متكامل" : "Integrated commercial and residential complex",
       location: language === "ar" ? "العليا، الرياض" : "Al-Olaya, Riyadh",
       duration: language === "ar" ? "20 شهر" : "20 Months",
@@ -109,7 +109,7 @@ export function ProjectsSection() {
       id: 5,
       title: language === "ar" ? "مسجد العيينة" : "Al-Uyayna Mosque",
       category: "commercial",
-      image: "/placeholder.svg?height=300&width=400",
+      image: "/court (5).jpeg?height=300&width=400",
       description: language === "ar" ? "مسجد بتصميم إسلامي أصيل" : "Mosque with authentic Islamic design",
       location: language === "ar" ? "العيينة، الرياض" : "Al-Uyayna, Riyadh",
       duration: language === "ar" ? "10 شهر" : "10 Months",
@@ -119,7 +119,7 @@ export function ProjectsSection() {
       id: 6,
       title: language === "ar" ? "فيلا الدكتور حسين الدوسري" : "Dr. Hussein Al-Dosari Villa",
       category: "residential",
-      image: "/placeholder.svg?height=300&width=400",
+      image: "/court (6).jpeg?height=300&width=400",
       description: language === "ar" ? "فيلا عصرية بمواصفات عالية" : "Modern villa with high specifications",
       location: language === "ar" ? "الرياض، المملكة العربية السعودية" : "Riyadh, Saudi Arabia",
       duration: language === "ar" ? "16 شهر" : "16 Months",
@@ -198,16 +198,16 @@ export function ProjectsSection() {
                 >
                   <CardContainer className="inter-var p-0">
                     <CardBody className="bg-white dark:bg-background relative group/card border border-gray-200 dark:border-border hover:shadow-xl hover:shadow-purple-500/[0.1] w-full h-auto rounded-xl p-6 backdrop-blur-sm transition-all duration-300">
-                      <CardItem translateZ="50" className="text-xl font-bold text-gray-900 dark:text-foreground mb-2">
+                      {/* <CardItem translateZ="50" className="text-xl font-bold text-gray-900 dark:text-foreground mb-2">
                         {project.title}
-                      </CardItem>
-                      <CardItem
+                      </CardItem> */}
+                      {/* <CardItem
                         as="p"
                         translateZ="60"
                         className="text-gray-600 dark:text-muted-foreground text-sm max-w-sm mb-4"
                       >
                         {project.description}
-                      </CardItem>
+                      </CardItem> */}
                       <CardItem translateZ="100" className="w-full mb-4">
                         <img
                           src={project.image || "/placeholder.svg"}

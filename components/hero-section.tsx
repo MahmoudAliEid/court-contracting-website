@@ -64,16 +64,16 @@ export function HeroSection() {
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-20">
+        <div className="flex flex-col-reverse text-start lg:flex-row  justify-between gap-12 lg:gap-20">
           {/* Left: Text Content */}
-          <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left">
-            <div className="hero-content space-y-8 w-full">
+          <div className="w-full lg:w-1/2 align-start  flex flex-col  lg:items-start text-start ">
+            <div className="hero-content text-start space-y-8 w-full">
               {/* Badge */}
               <motion.div
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white text-sm font-medium"
+                className="inline-flex  justify-start text-start   px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white text-sm font-medium"
               >
                 <Star
                   className={`$${language === "ar" ? "ml-2" : "mr-2"} w-4 h-4 text-yellow-400`}
@@ -85,19 +85,16 @@ export function HeroSection() {
 
               {/* Main Heading */}
               <h1
-                className={`text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight ${
-                  language === "ar"
-                    ? "text-right sm:text-center"
-                    : "text-left sm:text-center"
-                }`}
+                className={`text-5xl sm:text-6xl py-4 lg:text-7xl xl:text-8xl font-bold text-white leading-tight `
+                }
               >
                 {language === "ar" ? (
                   <>
-                    <span className="block">نبني</span>
-                    <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+                    <span className="block py-4">نبني</span>
+                    <span className="block py-3 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
                       المستقبل
                     </span>
-                    <span className="block text-4xl sm:text-5xl lg:text-6xl text-gray-300 font-normal">
+                    <span className="block  text-4xl sm:text-5xl lg:text-6xl text-gray-300 font-normal">
                       بإتقان وتميز
                     </span>
                   </>
@@ -116,11 +113,8 @@ export function HeroSection() {
 
               {/* Description */}
               <p
-                className={`text-xl sm:text-2xl text-gray-300 leading-relaxed max-w-2xl mx-auto ${
-                  language === "ar"
-                    ? "text-right sm:text-center"
-                    : "text-left sm:text-center"
-                }`}
+                dir={`${language === "ar" ? "rtl" : "ltr"}`}
+                className={`text-xl sm:text-2xl text-gray-300 text-start leading-relaxed max-w-2xl mx-auto `}
               >
                 {language === "ar"
                   ? "شركة كورت للمقاولات - رائدة في تقديم حلول البناء المبتكرة والمتطورة في المملكة العربية السعودية منذ عام 2008"
@@ -180,12 +174,20 @@ export function HeroSection() {
             {/* Dummy image with modern mask */}
             <div className="relative z-10">
               <img
-                src="/placeholder.jpg"
+                src="/court (9).jpeg"
+                alt="Modern Construction"
+                className="w-[520px] h-[520px] md:w-[500px] md:h-[500px] object-cover object-center shadow-2xl rounded-[60%_40%_60%_40%/40%_60%_40%_60%] border-4 border-white/20"
+                style={{ maskImage: 'radial-gradient(circle at 60% 40%, white 80%, transparent 100%)' }}
+              />
+            </div>
+            {/* <div className="relative z-10">
+              <img
+                src="/court (10).jpeg"
                 alt="Modern Construction"
                 className="w-[320px] h-[320px] md:w-[400px] md:h-[400px] object-cover object-center shadow-2xl rounded-[60%_40%_60%_40%/40%_60%_40%_60%] border-4 border-white/20"
                 style={{ maskImage: 'radial-gradient(circle at 60% 40%, white 80%, transparent 100%)' }}
               />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

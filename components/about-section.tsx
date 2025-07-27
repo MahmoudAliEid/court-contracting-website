@@ -113,7 +113,7 @@ export function AboutSection() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-7xl mx-auto">
           {/* Header Section */}
-          <div className={`text-center mb-20 ${language === "ar" ? "text-right" : "text-left"}`}>
+          <div className={`text-center mb-20 `}>
             <Badge
               variant="outline"
               className="mb-6 px-6 py-2 text-sm font-medium border-purple-200 text-purple-700 bg-purple-50 dark:border-purple-500/30 dark:text-purple-300 dark:bg-purple-500/10"
@@ -122,11 +122,11 @@ export function AboutSection() {
             </Badge>
 
             <h2
-              className={`text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 text-gray-900 dark:text-white leading-tight ${language === "ar" ? "text-right" : "text-left"}`}
+              className={`text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 text-gray-900 dark:text-white leading-tight text-start`}
             >
               {language === "ar" ? (
                 <>
-                  <span className="block">التميز في البناء</span>
+                  <span className="block py-4">التميز في البناء</span>
                   <span className="block bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                     منذ 2008
                   </span>
@@ -142,7 +142,7 @@ export function AboutSection() {
             </h2>
 
             <p
-              className={`text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed ${language === "ar" ? "text-right" : "text-left"}`}
+              className={`text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed text-start`}
             >
               {language === "ar"
                 ? "نحن في شركة كورت للمقاولات نفخر بتقديم خدمات البناء والمقاولات بأعلى معايير الجودة والاحترافية، مع التزامنا بالابتكار والتطوير المستمر لتلبية تطلعات عملائنا."
@@ -175,17 +175,17 @@ export function AboutSection() {
           </div>
 
           {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-1 gap-16 items-center mb-20 max-w-3xl mx-auto text-center">
+          <div className="grid grid-cols-1 lg:grid-cols-1 text-start gap-16 items-center mb-20 max-w-3xl mx-auto ">
             {/* Content Side */}
             <div className="space-y-8 text-center">
               <div className="space-y-6">
-                <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
+                <h3 className="text-3xl sm:text-4xl text-start font-bold text-gray-900 dark:text-white">
                   {language === "ar"
                     ? "نبني أحلامكم بأيدي خبيرة وتقنيات متطورة"
                     : "Building Your Dreams with Expert Hands and Advanced Technology"}
                 </h3>
 
-                <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-lg text-gray-600 text-start dark:text-gray-300 leading-relaxed">
                   {language === "ar"
                     ? "مع خبرة تمتد لأكثر من 15 عاماً في مجال البناء والمقاولات، نقدم حلولاً شاملة ومتكاملة تشمل التصميم والتنفيذ والإشراف، مع ضمان الجودة والالتزام بالمواعيد."
                     : "With over 15 years of experience in construction and contracting, we provide comprehensive and integrated solutions including design, execution, and supervision, ensuring quality and commitment to deadlines."}
@@ -202,7 +202,7 @@ export function AboutSection() {
                 ].map((item, index) => (
                   <div
                     key={index}
-                    className={`flex items-center space-x-4 group ${language === "ar" ? "flex-row-reverse space-x-reverse" : ""}`}
+                    className={`flex items-center  group gap-2 `}
                   >
                     <div className="w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full group-hover:scale-150 transition-transform duration-300 flex-shrink-0"></div>
                     <span className="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300 font-medium">

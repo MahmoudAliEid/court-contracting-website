@@ -176,7 +176,7 @@ export function AceternityNavbar() {
                     <span className="relative z-10">{item.name}</span>
                     {item.dropdown && (
                       <ChevronDown
-                        className={`${language === "ar" ? "mr-1.5" : "ml-1.5"} h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180`}
+                        className={`${language === "ar" ? "mr-1.5" : "ml-1.5"} h-3.5 w-3.5  transition-transform  duration-300 group-hover:rotate-180`}
                       />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-pink-500/0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -191,7 +191,7 @@ export function AceternityNavbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 15, scale: 0.95 }}
                       transition={{ duration: 0.2, ease: "easeOut" }}
-                      className={`absolute top-full ${language === "ar" ? "right-0" : "left-0"} mt-2 w-80 bg-white/98 dark:bg-background/98 backdrop-blur-xl border border-gray-200/80 dark:border-border/80 rounded-2xl shadow-2xl overflow-hidden z-[200]`}
+                      className={`absolute top-full ${language === "ar" ? "right-0" : "left-0"} mt-2 w-80 bg-white/85 dark:bg-background/85 backdrop-blur-xl border border-gray-200/80 dark:border-border/80 rounded-2xl shadow-2xl overflow-hidden z-[200]`}
                       style={{ zIndex: 200 }}
                     >
                       <div className="p-2">
@@ -243,7 +243,7 @@ export function AceternityNavbar() {
           </div>
 
           {/* Controls */}
-          <div className={`flex items-center ${language === "ar" ? "space-x-reverse" : "space-x-3"}`}>
+          <div className={`flex items-center space-x-3`}>
             {/* Language Toggle */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
