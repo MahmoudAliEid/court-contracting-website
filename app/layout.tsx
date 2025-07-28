@@ -4,6 +4,7 @@ import { Inter, Cairo } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { LanguageProvider } from "@/components/language-provider"
+import QueryProvider from "@/components/QueryProvider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const cairo = Cairo({ subsets: ["arabic"], variable: "--font-cairo" })
@@ -52,21 +53,27 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({
+
+ 
+
   children,
 }: {
   children: React.ReactNode
 }) {
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
       </head>
+      <QueryProvider>
       <body className={`${inter.variable} ${cairo.variable} font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange={false}>
           <LanguageProvider>{children}</LanguageProvider>
         </ThemeProvider>
       </body>
+      </QueryProvider>
     </html>
   )
 }

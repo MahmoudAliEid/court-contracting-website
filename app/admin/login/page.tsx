@@ -9,15 +9,41 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff, Lock, User, ArrowRight } from "lucide-react"
-import { motion } from "framer-motion"
+import { m, motion } from "framer-motion"
 import Image from "next/image"
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+
 
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false)
-  const [credentials, setCredentials] = useState({ username: "", password: "" })
+  const [credentials, setCredentials] = useState({ email: "", password: "" })
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  
+
+  const mutate = useMutation({
+    mutationFn: async (credentials: { email: string; password: string }) => {
+      const { email, password } = credentials
+      const response = await fetch('/api/user/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }) // Assuming the API expects 'email' instead of 'email'
+      })
+      if (!response.ok) {
+        throw new Error('Login failed')
+      }
+      return response.json()
+    },
+    // Optionally, you can add onSuccess/onError here if needed
+  });
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,12 +54,22 @@ export default function AdminLogin() {
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
     // Simple authentication (in production, use proper authentication)
-    if (credentials.username === "admin" && credentials.password === "court2024") {
-      localStorage.setItem("adminAuth", "true")
-      router.push("/admin/dashboard")
-    } else {
-      setError("Invalid username or password")
-    }
+    // if (credentials.email === "admin" && credentials.password === "court2024") {
+    //   localStorage.setItem("adminAuth", "true")
+    //   router.push("/admin/dashboard")
+    // } else {
+    //   setError("Invalid email or password")
+    // }
+    mutate.mutate(credentials, {
+      onSuccess: (data) => {
+        localStorage.setItem("adminAuth", "true")
+        router.push("/admin/dashboard")
+      },
+      onError: (error) => {
+
+        setError("Invalid email or password")
+      }
+    })
 
     setIsLoading(false)
   }
@@ -99,18 +135,18 @@ export default function AdminLogin() {
               className="space-y-4"
             >
               <div className="space-y-2">
-                <Label htmlFor="username" className="text-sm font-medium">
-                  Username
+                <Label htmlFor="email" className="text-sm font-medium">
+                  email
                 </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
-                    id="username"
+                    id="email"
                     type="text"
-                    placeholder="Enter username"
+                    placeholder="Enter email"
                     className="pl-10 border-border/50 focus:border-purple-500 transition-colors"
-                    value={credentials.username}
-                    onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                    value={credentials.email}
+                    onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
                     required
                   />
                 </div>

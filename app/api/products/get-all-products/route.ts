@@ -4,5 +4,5 @@ const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
     const products = await prisma.product.findMany();
-    return NextResponse.json({ products }, { status: 200 });
+    return NextResponse.json( products , { status: 200 });
 }

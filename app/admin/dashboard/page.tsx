@@ -20,6 +20,11 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { LogOut, Plus, MoreHorizontal, Edit, Trash2, Eye, ImageIcon, Building2, Users, FolderOpen } from "lucide-react"
+import { useMutation, useQuery, QueryClient } from "@tanstack/react-query"
+
+
+const queryClient = new QueryClient()
+
 
 interface Project {
   id: string
@@ -33,16 +38,101 @@ interface Project {
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [projects, setProjects] = useState<Project[]>([])
+ 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [newProject, setNewProject] = useState({
     title: "",
+    ar_title: "",
     category: "",
+    ar_category: "",
     description: "",
-    image: "",
+    ar_description: "",
+    images: [] as string[],
     status: "draft" as const,
+    ar_status: "draft",
   })
   const router = useRouter()
+
+  // Check authentication on mount
+
+  const { data: projects = [], isLoading } = useQuery<Project[]>({
+   queryKey: ['projects'],
+   queryFn: async () => {
+    const response = await fetch('/api/products/get-all-products')
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
+    return response.json()
+   },
+   refetchOnWindowFocus: false,
+  })
+  const { data: categories = [], isLoading: isLoadingCategories } = useQuery<Project[]>({
+   queryKey: ['categories'],
+   queryFn: async () => {
+    const response = await fetch('/api/categories')
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
+    return response.json()
+   },
+   refetchOnWindowFocus: false,
+  })
+  const { data: status = [], isLoading: isLoadingStatus } = useQuery<Project[]>({
+   queryKey: ['status'],
+   queryFn: async () => {
+    const response = await fetch('/api/status')
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
+    return response.json()
+   },
+   refetchOnWindowFocus: false,
+  })
+  
+  // calculate product count and other stats
+  const totalprojects = projects && projects?.length || 0
+  const completedprojects = projects?.filter((product: any) => product.status === 'completed').length || 0
+  const activeprojects = projects?.filter((product: any) => product.status === 'active').length || 0
+  const draftprojects = projects?.filter((product: any) => product.status === 'draft').length || 0
+  const lastMonthprojects = projects?.filter((product: any) => new Date(product.createdAt) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length || 0
+
+  const mutate=useMutation({
+    mutationFn: async (product: { title: string; category: string; ar_title: string; description: string; ar_description: string; ar_category: string; ar_status: string; images: string[]; status: string }) => {
+      const { title, category, ar_title, ar_description, ar_category, ar_status, description, images, status } = product
+      const formData = new FormData()
+      formData.append('title', title)
+      formData.append('category', category)
+      formData.append('ar_title', ar_title)
+      formData.append('ar_description', ar_description)
+      formData.append('ar_category', ar_category)
+      formData.append('ar_status', ar_status)
+      formData.append('status', status)
+      formData.append('description', description)
+      images.forEach((image: any, index: number) => {
+        formData.append(`images[${index}]`, image)
+      })
+
+      const response = await fetch('/api/products/create-product', {
+        method: 'POST',
+    
+       
+       
+        body: formData, credentials: 'include',
+      })
+      if (!response.ok) {
+        throw new Error('Login failed')
+      }
+      return response.json()
+    },
+    // Optionally, you can add onSuccess/onError here if needed
+    onSuccess: () => {
+    
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+    },
+    onError: (error) => {
+      console.error('Error creating product:', error)
+    },
+  });
 
   useEffect(() => {
     const auth = localStorage.getItem("adminAuth")
@@ -51,26 +141,26 @@ export default function AdminDashboard() {
     } else {
       setIsAuthenticated(true)
       // Load sample projects
-      setProjects([
-        {
-          id: "1",
-          title: "Saudi Central Bank",
-          category: "commercial",
-          description: "Central Bank building development and renovation project",
-          image: "/placeholder.svg?height=200&width=300",
-          status: "completed",
-          createdAt: "2024-01-15",
-        },
-        {
-          id: "2",
-          title: "Prince Mohammed Palace",
-          category: "residential",
-          description: "Luxury palace with distinctive architectural design",
-          image: "/placeholder.svg?height=200&width=300",
-          status: "active",
-          createdAt: "2024-02-20",
-        },
-      ])
+      // setProjects([
+      //   {
+      //     id: "1",
+      //     title: "Saudi Central Bank",
+      //     category: "commercial",
+      //     description: "Central Bank building development and renovation project",
+      //     image: "/placeholder.svg?height=200&width=300",
+      //     status: "completed",
+      //     createdAt: "2024-01-15",
+      //   },
+      //   {
+      //     id: "2",
+      //     title: "Prince Mohammed Palace",
+      //     category: "residential",
+      //     description: "Luxury palace with distinctive architectural design",
+      //     image: "/placeholder.svg?height=200&width=300",
+      //     status: "active",
+      //     createdAt: "2024-02-20",
+      //   },
+      // ])
     }
   }, [router])
 
@@ -80,24 +170,28 @@ export default function AdminDashboard() {
   }
 
   const handleAddProject = () => {
-    const project: Project = {
-      id: Date.now().toString(),
-      ...newProject,
-      createdAt: new Date().toISOString().split("T")[0],
-    }
-    setProjects([...projects, project])
-    setNewProject({
-      title: "",
-      category: "",
-      description: "",
-      image: "",
-      status: "draft",
-    })
+   mutate.mutate(newProject)
     setIsAddDialogOpen(false)
   }
 
   const handleDeleteProject = (id: string) => {
-    setProjects(projects.filter((p) => p.id !== id))
+    useMutation({
+      mutationFn: async () => {
+        const response = await fetch(`/api/products/delete-product?id=${id}`, {
+          method: 'DELETE',
+        });
+        if (!response.ok) {
+          throw new Error('Failed to delete project');
+        }
+        return response.json();
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['projects'] });
+      },
+      onError: (error) => {
+        console.error('Error deleting project:', error);
+      },
+    });
   }
 
   const getStatusColor = (status: string) => {
@@ -157,8 +251,8 @@ export default function AdminDashboard() {
               <Building2 className="h-4 w-4 text-gray-500 dark:text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900 dark:text-foreground">{projects.length}</div>
-              <p className="text-xs text-gray-500 dark:text-muted-foreground">+2 from last month</p>
+              <div className="text-2xl font-bold text-gray-900 dark:text-foreground">{totalprojects}</div>
+              <p className="text-xs text-gray-500 dark:text-muted-foreground">{lastMonthprojects} from last month</p>
             </CardContent>
           </Card>
 
@@ -195,7 +289,7 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-gray-900 dark:text-foreground">
-                {projects.filter((p) => p.status === "draft").length}
+                {projects.filter((p: Project) => p.status === "draft").length}
               </div>
               <p className="text-xs text-gray-500 dark:text-muted-foreground">Pending approval</p>
             </CardContent>
@@ -240,6 +334,18 @@ export default function AdminDashboard() {
                       />
                     </div>
                     <div className="grid gap-2">
+                      <Label htmlFor="ar_title" className="text-gray-700 dark:text-gray-300">
+                        Project Title (Arabic)
+                      </Label>
+                      <Input
+                        id="ar_title"
+                        value={newProject.ar_title}
+                        onChange={(e) => setNewProject({ ...newProject, ar_title: e.target.value })}
+                        placeholder="أدخل عنوان المشروع"
+                        className="border-gray-300 dark:border-border focus:border-purple-500 dark:focus:border-purple-400"
+                      />
+                    </div>
+                    <div className="grid gap-2">
                       <Label htmlFor="category" className="text-gray-700 dark:text-gray-300">
                         Category
                       </Label>
@@ -264,6 +370,26 @@ export default function AdminDashboard() {
                       </Select>
                     </div>
                     <div className="grid gap-2">
+                      <Label htmlFor="ar_category" className="text-gray-700 dark:text-gray-300">
+                        Category (Arabic)
+                      </Label>
+                      <Select
+                        value={newProject.ar_category}
+                        onValueChange={(value) => setNewProject({ ...newProject, ar_category: value })}
+                      >
+                        <SelectTrigger className="border-gray-300 dark:border-border focus:border-purple-500 dark:focus:border-purple-400">
+                          <SelectValue placeholder="اختر تصنيف المشروع" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-background border-gray-200 dark:border-border">
+                          {categories.map((cat: any) => (
+                            <SelectItem key={cat.id} value={cat.ar_name || cat.name} className="text-gray-700 dark:text-gray-300">
+                              {cat.ar_name || cat.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid gap-2">
                       <Label htmlFor="description" className="text-gray-700 dark:text-gray-300">
                         Description
                       </Label>
@@ -276,16 +402,46 @@ export default function AdminDashboard() {
                       />
                     </div>
                     <div className="grid gap-2">
-                      <Label htmlFor="image" className="text-gray-700 dark:text-gray-300">
-                        Image URL
+                      <Label htmlFor="ar_description" className="text-gray-700 dark:text-gray-300">
+                        Description (Arabic)
                       </Label>
-                      <Input
-                        id="image"
-                        value={newProject.image}
-                        onChange={(e) => setNewProject({ ...newProject, image: e.target.value })}
-                        placeholder="Enter image URL or upload"
+                      <Textarea
+                        id="ar_description"
+                        value={newProject.ar_description}
+                        onChange={(e) => setNewProject({ ...newProject, ar_description: e.target.value })}
+                        placeholder="أدخل وصف المشروع"
                         className="border-gray-300 dark:border-border focus:border-purple-500 dark:focus:border-purple-400"
                       />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="images" className="text-gray-700 dark:text-gray-300">
+                      Project Images
+                      </Label>
+                      <Input
+                      id="images"
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={(e) => {
+                        const files = Array.from(e.target.files || []);
+                        setNewProject({
+                        ...newProject,
+                        images: files as any, // You may want to handle File[] properly in your backend
+                        });
+                      }}
+                      className="border-gray-300 dark:border-border focus:border-purple-500 dark:focus:border-purple-400"
+                      />
+                      <div className="flex flex-wrap gap-2 mt-2">
+                      {Array.from(newProject.images || []).map((file: any, idx: number) => (
+                        <div key={idx} className="w-12 h-12 rounded overflow-hidden border border-gray-200 dark:border-border">
+                        <img
+                          src={typeof file === "string" ? file : URL.createObjectURL(file)}
+                          alt={`preview-${idx}`}
+                          className="object-cover w-full h-full"
+                        />
+                        </div>
+                      ))}
+                      </div>
                     </div>
                     <div className="grid gap-2">
                       <Label htmlFor="status" className="text-gray-700 dark:text-gray-300">
@@ -308,6 +464,26 @@ export default function AdminDashboard() {
                           <SelectItem value="completed" className="text-gray-700 dark:text-gray-300">
                             Completed
                           </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="ar_status" className="text-gray-700 dark:text-gray-300">
+                        Status (Arabic)
+                      </Label>
+                      <Select
+                        value={newProject.ar_status}
+                        onValueChange={(value) => setNewProject({ ...newProject, ar_status: value })}
+                      >
+                        <SelectTrigger className="border-gray-300 dark:border-border focus:border-purple-500 dark:focus:border-purple-400">
+                          <SelectValue placeholder="اختر حالة المشروع" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-background border-gray-200 dark:border-border">
+                          {status.map((stat: any) => (
+                            <SelectItem key={stat.id} value={stat.ar_name || stat.name} className="text-gray-700 dark:text-gray-300">
+                              {stat.ar_name || stat.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
