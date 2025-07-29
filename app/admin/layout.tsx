@@ -1,5 +1,8 @@
+
 import type React from "react"
 import type { Metadata } from "next"
+import QueryProvider from "@/components/QueryProvider";
+import AppToaster from "../toaster";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard - Court Contracting Company",
@@ -11,5 +14,12 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <div className="min-h-screen bg-background">{children}</div>
+  return (
+    <QueryProvider>
+      <div className="min-h-screen bg-background">
+        {children}
+        <AppToaster />
+      </div>
+    </QueryProvider>
+  );
 }

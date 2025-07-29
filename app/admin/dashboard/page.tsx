@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -21,6 +21,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { LogOut, Plus, MoreHorizontal, Edit, Trash2, Eye, ImageIcon, Building2, Users, FolderOpen } from "lucide-react"
 import { useMutation, useQuery, QueryClient } from "@tanstack/react-query"
+import { useToast } from "@/hooks/use-toast"
+
+
 
 
 const queryClient = new QueryClient()
@@ -34,12 +37,14 @@ interface Project {
   image: string
   status: "active" | "completed" | "draft"
   createdAt: string
+  images: string[]
 }
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
- 
+  const { toast } = useToast()
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [id, setId] = useState<string | null>(null)
   const [newProject, setNewProject] = useState({
     title: "",
     ar_title: "",
@@ -48,89 +53,223 @@ export default function AdminDashboard() {
     description: "",
     ar_description: "",
     images: [] as string[],
-    status: "draft" as const,
-    ar_status: "draft",
+    status: "",
+    ar_status: "",
   })
   const router = useRouter()
 
   // Check authentication on mount
 
   const { data: projects = [], isLoading } = useQuery<Project[]>({
-   queryKey: ['projects'],
-   queryFn: async () => {
-    const response = await fetch('/api/products/get-all-products')
-    if (!response.ok) {
-      throw new Error('Network response was not ok')
-    }
-    return response.json()
-   },
-   refetchOnWindowFocus: false,
-  })
-  const { data: categories = [], isLoading: isLoadingCategories } = useQuery<Project[]>({
-   queryKey: ['categories'],
-   queryFn: async () => {
-    const response = await fetch('/api/categories')
-    if (!response.ok) {
-      throw new Error('Network response was not ok')
-    }
-    return response.json()
-   },
-   refetchOnWindowFocus: false,
-  })
-  const { data: status = [], isLoading: isLoadingStatus } = useQuery<Project[]>({
-   queryKey: ['status'],
-   queryFn: async () => {
-    const response = await fetch('/api/status')
-    if (!response.ok) {
-      throw new Error('Network response was not ok')
-    }
-    return response.json()
-   },
-   refetchOnWindowFocus: false,
-  })
-  
-  // calculate product count and other stats
-  const totalprojects = projects && projects?.length || 0
-  const completedprojects = projects?.filter((product: any) => product.status === 'completed').length || 0
-  const activeprojects = projects?.filter((product: any) => product.status === 'active').length || 0
-  const draftprojects = projects?.filter((product: any) => product.status === 'draft').length || 0
-  const lastMonthprojects = projects?.filter((product: any) => new Date(product.createdAt) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length || 0
-
-  const mutate=useMutation({
-    mutationFn: async (product: { title: string; category: string; ar_title: string; description: string; ar_description: string; ar_category: string; ar_status: string; images: string[]; status: string }) => {
-      const { title, category, ar_title, ar_description, ar_category, ar_status, description, images, status } = product
-      const formData = new FormData()
-      formData.append('title', title)
-      formData.append('category', category)
-      formData.append('ar_title', ar_title)
-      formData.append('ar_description', ar_description)
-      formData.append('ar_category', ar_category)
-      formData.append('ar_status', ar_status)
-      formData.append('status', status)
-      formData.append('description', description)
-      images.forEach((image: any, index: number) => {
-        formData.append(`images[${index}]`, image)
-      })
-
-      const response = await fetch('/api/products/create-product', {
-        method: 'POST',
-    
-       
-       
-        body: formData, credentials: 'include',
-      })
+    queryKey: ['projects'],
+    queryFn: async () => {
+      const response = await fetch('/api/products/get-all-products')
       if (!response.ok) {
-        throw new Error('Login failed')
+        throw new Error('Network response was not ok')
       }
       return response.json()
     },
-    // Optionally, you can add onSuccess/onError here if needed
+   staleTime: 30 * 1000, // 30 seconds
+    retry: 2,
+    retryDelay: 1000,
+  })
+ 
+  interface Category {
+    id: string
+    name: string
+    ar_name?: string
+  }
+  
+  const { data: categories = [], isLoading: isLoadingCategories } = useQuery<Category[]>({
+     queryKey: ['categories'],
+     queryFn: async () => {
+      const response = await fetch('/api/categories')
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+      return response.json()
+     },
+     refetchOnWindowFocus: false,
+    })
+
+  interface Status {
+    id: string
+    name: string
+    ar_name?: string
+  }
+  
+  const { data: status = [], isLoading: isLoadingStatus } = useQuery<Status[]>({
+     queryKey: ['status'],
+     queryFn: async () => {
+      const response = await fetch('/api/status')
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+      return response.json()
+     },
+     refetchOnWindowFocus: false,
+    })
+  
+  // calculate product count and other stats
+  const totalprojects = projects && projects?.length || 0
+  const lastMonthprojects = projects?.filter((product: any) => new Date(product.createdAt) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length || 0
+
+  const { mutate: createProject, isLoading: isCreatingProject } = useMutation(
+    async (product: { title: string; category: string; ar_title: string; description: string; ar_description: string; ar_category: string; ar_status: string; images: string[]; status: string }) => {
+      const { title, category, ar_title, ar_description, ar_category, ar_status, description, images, status } = product;
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('category', category);
+      formData.append('ar_title', ar_title);
+      formData.append('ar_description', ar_description);
+      formData.append('ar_category', ar_category);
+      formData.append('ar_status', ar_status);
+      formData.append('status', status);
+      formData.append('description', description);
+      images.forEach((image: any, index: number) => {
+        formData.append(`images[${index}]`, image);
+      });
+
+      const response = await fetch('/api/products/create-product', {
+        method: 'POST',
+        body: formData, credentials: 'include',
+      });
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+      return response.json();
+    },
+    {
+      onSuccess: () => {
+        console.log('onSuccess: Project created');
+        queryClient.invalidateQueries({ queryKey: ['projects'] });
+        console.log('queryClient.invalidateQueries called');
+        toast({
+          title: "Project created",
+          description: "Project has been successfully created.",
+          variant: "default",
+        });
+        console.log('toast called');
+        setNewProject({
+          title: "",
+          ar_title: "",
+          category: "",
+          ar_category: "",
+          description: "",
+          ar_description: "",
+          status: "",
+          ar_status: "",
+          images: [],
+        });
+        setIsAddDialogOpen(false);
+      },
+      onError: (error) => {
+        console.error('Error creating product:', error);
+        toast({
+          title: "Error",
+          description: 'Failed to create project',
+          variant: "destructive",
+        });
+      },
+    }
+  );
+
+  // Define mutateUpdate at the top level, using the latest id via closure
+  const { mutate: updateProject } = useMutation(
+    async ({ product, id }: { product: { title: string; category: string; ar_title: string; description: string; ar_description: string; ar_category: string; ar_status: string; images: string[]; status: string }, id: string }) => {
+      const { title, category, ar_title, ar_description, ar_category, ar_status, description, images, status } = product;
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('category', category);
+      formData.append('ar_title', ar_title);
+      formData.append('ar_description', ar_description);
+      formData.append('ar_category', ar_category);
+      formData.append('ar_status', ar_status);
+      formData.append('status', status);
+      formData.append('description', description);
+      images.forEach((image: any, index: number) => {
+        formData.append(`images[${index}]`, image);
+      });
+
+      const response = await fetch(`/api/products/update-product/${id}`, {
+        method: 'PUT',
+        body: formData,
+        credentials: 'include',
+      });
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        data = { error: 'No JSON response from server' };
+      }
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to update project');
+      }
+      return data;
+    },
+    {
+      onSuccess: () => {
+        console.log('onSuccess: Project updated');
+        queryClient.invalidateQueries({ queryKey: ['projects'] });
+        console.log('queryClient.invalidateQueries called');
+        toast({
+          title: "Project updated",
+          description: "Project has been successfully updated.",
+          variant: "default",
+        });
+        console.log('toast called');
+        setNewProject({
+          title: "",
+          ar_title: "",
+          category: "",
+          ar_category: "",
+          description: "",
+          ar_description: "",
+          status: "",
+          ar_status: "",
+          images: [],
+        });
+        setIsAddDialogOpen(false);
+      },
+      onError: (error: any) => {
+        console.error('Error updating product:', error?.message || error);
+        toast({
+          title: "Error",
+          description: error?.message || 'Failed to update project',
+          variant: "destructive",
+        });
+      },
+    }
+  );
+
+  const { mutate: deleteProject } = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/products/delete-product/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete project');
+      }
+      return response.json();
+    },
     onSuccess: () => {
-    
-      queryClient.invalidateQueries({ queryKey: ['products'] })
+      console.log('onSuccess: Project deleted');
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      console.log('queryClient.invalidateQueries called');
+      toast({
+        title: "Project deleted",
+        description: "Project has been successfully deleted.",
+        variant: "default",
+      });
+      console.log('toast called');
     },
     onError: (error) => {
-      console.error('Error creating product:', error)
+      console.error('Error deleting project:', error);
+      toast({
+        title: "Error",
+        description: 'Failed to delete project',
+        variant: "destructive",
+      });
     },
   });
 
@@ -168,31 +307,63 @@ export default function AdminDashboard() {
     localStorage.removeItem("adminAuth")
     router.push("/admin/login")
   }
-
   const handleAddProject = () => {
-   mutate.mutate(newProject)
-    setIsAddDialogOpen(false)
+   
+   if (id) {
+   updateProject({ product: newProject, id })
+   } else {
+    createProject(newProject)
+   }
+    // setIsAddDialogOpen(false)
+    setId(null)
   }
+    
+  
 
   const handleDeleteProject = (id: string) => {
-    useMutation({
-      mutationFn: async () => {
-        const response = await fetch(`/api/products/delete-product?id=${id}`, {
-          method: 'DELETE',
-        });
-        if (!response.ok) {
-          throw new Error('Failed to delete project');
-        }
-        return response.json();
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['projects'] });
-      },
-      onError: (error) => {
-        console.error('Error deleting project:', error);
-      },
-    });
+    deleteProject(id);
   }
+
+  const handleEditProject = (id: string) => {
+    setId(id);
+    setIsAddDialogOpen(true);
+  };
+
+  // Fetch product data for editing when id changes and dialog is open
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (id && isAddDialogOpen) {
+        try {
+          const response = await fetch(`/api/products/get-product/${id}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const product = await response.json();
+            setNewProject(prev => ({
+            ...prev,
+            title: product?.title || "",
+            ar_title: product?.ar_title || "",
+            category: product?.category || "",
+            ar_category: product?.ar_category || "",
+            description: product?.description || "",
+            ar_description: product?.ar_description || "",
+            images: product?.images || prev.images,
+            status: product?.status || "draft",
+            ar_status: product?.ar_status || "draft",
+            }));
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    };
+    fetchProduct();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, isAddDialogOpen]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -235,7 +406,7 @@ export default function AdminDashboard() {
               onClick={handleLogout}
               className="border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-border dark:text-gray-300 dark:hover:bg-gray-800 bg-transparent"
             >
-              <LogOut className="h-4 w-4 mr-2" />
+            <LogOut className="h-4 w-4 mr-2" />
               Logout
             </Button>
           </div>
@@ -308,20 +479,20 @@ export default function AdminDashboard() {
               </div>
               <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
+                  <Button className="bg-gradient-to-r from-purple-600  to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Project
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px] bg-white dark:bg-background border-gray-200 dark:border-border">
+                <DialogContent className="sm:max-w-[950px] my-11  bg-white dark:bg-background border-gray-200 dark:border-border">
                   <DialogHeader>
                     <DialogTitle className="text-gray-900 dark:text-foreground">Add New Project</DialogTitle>
                     <DialogDescription className="text-gray-600 dark:text-muted-foreground">
                       Create a new project entry for your portfolio
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid gap-2">
+                  <div className="grid gap-4 grid-cols-2 py-4 ">
+                    <div className="grid gap-2 ">
                       <Label htmlFor="title" className="text-gray-700 dark:text-gray-300">
                         Project Title
                       </Label>
@@ -333,7 +504,7 @@ export default function AdminDashboard() {
                         className="border-gray-300 dark:border-border focus:border-purple-500 dark:focus:border-purple-400"
                       />
                     </div>
-                    <div className="grid gap-2">
+                    <div className="grid gap-2 ">
                       <Label htmlFor="ar_title" className="text-gray-700 dark:text-gray-300">
                         Project Title (Arabic)
                       </Label>
@@ -345,51 +516,47 @@ export default function AdminDashboard() {
                         className="border-gray-300 dark:border-border focus:border-purple-500 dark:focus:border-purple-400"
                       />
                     </div>
-                    <div className="grid gap-2">
+                    <div className="grid gap-2 ">
                       <Label htmlFor="category" className="text-gray-700 dark:text-gray-300">
                         Category
                       </Label>
                       <Select
                         value={newProject.category}
-                        onValueChange={(value) => setNewProject({ ...newProject, category: value })}
+                        onValueChange={(value) => setNewProject({ ...newProject, category: value, ar_category: value })}
                       >
                         <SelectTrigger className="border-gray-300 dark:border-border focus:border-purple-500 dark:focus:border-purple-400">
                           <SelectValue placeholder="Select category" />
                         </SelectTrigger>
                         <SelectContent className="bg-white dark:bg-background border-gray-200 dark:border-border">
-                          <SelectItem value="residential" className="text-gray-700 dark:text-gray-300">
-                            Residential
-                          </SelectItem>
-                          <SelectItem value="commercial" className="text-gray-700 dark:text-gray-300">
-                            Commercial
-                          </SelectItem>
-                          <SelectItem value="renovation" className="text-gray-700 dark:text-gray-300">
-                            Renovation
-                          </SelectItem>
+                          {categories.map((cat: any) => (
+                            <SelectItem key={cat.id} value={cat.id}  className="text-gray-700 dark:text-gray-300">
+                              {cat.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="grid gap-2">
+                    <div className="grid gap-2  ">
                       <Label htmlFor="ar_category" className="text-gray-700 dark:text-gray-300">
                         Category (Arabic)
                       </Label>
                       <Select
                         value={newProject.ar_category}
-                        onValueChange={(value) => setNewProject({ ...newProject, ar_category: value })}
+                        onValueChange={(value) => setNewProject({ ...newProject, ar_category: value, category: value })}
                       >
                         <SelectTrigger className="border-gray-300 dark:border-border focus:border-purple-500 dark:focus:border-purple-400">
                           <SelectValue placeholder="اختر تصنيف المشروع" />
                         </SelectTrigger>
                         <SelectContent className="bg-white dark:bg-background border-gray-200 dark:border-border">
                           {categories.map((cat: any) => (
-                            <SelectItem key={cat.id} value={cat.ar_name || cat.name} className="text-gray-700 dark:text-gray-300">
+                            <SelectItem key={cat.id} value={cat.id} className="text-gray-700 dark:text-gray-300">
                               {cat.ar_name || cat.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="grid gap-2">
+                    <div className="grid gap-2 ">
                       <Label htmlFor="description" className="text-gray-700 dark:text-gray-300">
                         Description
                       </Label>
@@ -401,7 +568,7 @@ export default function AdminDashboard() {
                         className="border-gray-300 dark:border-border focus:border-purple-500 dark:focus:border-purple-400"
                       />
                     </div>
-                    <div className="grid gap-2">
+                    <div className="grid gap-2 ">
                       <Label htmlFor="ar_description" className="text-gray-700 dark:text-gray-300">
                         Description (Arabic)
                       </Label>
@@ -413,7 +580,49 @@ export default function AdminDashboard() {
                         className="border-gray-300 dark:border-border focus:border-purple-500 dark:focus:border-purple-400"
                       />
                     </div>
-                    <div className="grid gap-2">
+                  
+                    <div className="grid gap-2 ">
+                      <Label htmlFor="status" className="text-gray-700 dark:text-gray-300">
+                        Status
+                      </Label>
+                      <Select
+                        value={newProject.status}
+                        onValueChange={(value: any) => setNewProject({ ...newProject, status: value, ar_status: value })}
+                      >
+                        <SelectTrigger className="border-gray-300 dark:border-border focus:border-purple-500 dark:focus:border-purple-400">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-background border-gray-200 dark:border-border">
+                          {status.map((stat: any) => (
+                            <SelectItem key={stat.id} value={stat.id} className="text-gray-700 dark:text-gray-300">
+                              {stat.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid gap-2 ">
+                      <Label htmlFor="ar_status" className="text-gray-700 dark:text-gray-300">
+                        Status (Arabic)
+                      </Label>
+                      <Select
+                        value={newProject.ar_status}
+                        onValueChange={(value) => setNewProject({ ...newProject, ar_status: value , status: value })}
+                      >
+                        <SelectTrigger className="border-gray-300 dark:border-border focus:border-purple-500 dark:focus:border-purple-400">
+                          <SelectValue placeholder="اختر حالة المشروع" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-background border-gray-200 dark:border-border">
+                          {status.map((stat: any) => (
+                            <SelectItem key={stat.id} value={stat.id} className="text-gray-700 dark:text-gray-300">
+                              {stat.ar_name || stat.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                      <div className="grid gap-2 grid-cols-1 ">
                       <Label htmlFor="images" className="text-gray-700 dark:text-gray-300">
                       Project Images
                       </Label>
@@ -443,55 +652,24 @@ export default function AdminDashboard() {
                       ))}
                       </div>
                     </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="status" className="text-gray-700 dark:text-gray-300">
-                        Status
-                      </Label>
-                      <Select
-                        value={newProject.status}
-                        onValueChange={(value: any) => setNewProject({ ...newProject, status: value })}
-                      >
-                        <SelectTrigger className="border-gray-300 dark:border-border focus:border-purple-500 dark:focus:border-purple-400">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-background border-gray-200 dark:border-border">
-                          <SelectItem value="draft" className="text-gray-700 dark:text-gray-300">
-                            Draft
-                          </SelectItem>
-                          <SelectItem value="active" className="text-gray-700 dark:text-gray-300">
-                            Active
-                          </SelectItem>
-                          <SelectItem value="completed" className="text-gray-700 dark:text-gray-300">
-                            Completed
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="ar_status" className="text-gray-700 dark:text-gray-300">
-                        Status (Arabic)
-                      </Label>
-                      <Select
-                        value={newProject.ar_status}
-                        onValueChange={(value) => setNewProject({ ...newProject, ar_status: value })}
-                      >
-                        <SelectTrigger className="border-gray-300 dark:border-border focus:border-purple-500 dark:focus:border-purple-400">
-                          <SelectValue placeholder="اختر حالة المشروع" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-background border-gray-200 dark:border-border">
-                          {status.map((stat: any) => (
-                            <SelectItem key={stat.id} value={stat.ar_name || stat.name} className="text-gray-700 dark:text-gray-300">
-                              {stat.ar_name || stat.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
                   <div className="flex justify-end space-x-2">
                     <Button
                       variant="outline"
-                      onClick={() => setIsAddDialogOpen(false)}
+                      onClick={() => {setIsAddDialogOpen(false)
+                        setNewProject(
+                          {
+                            title: "",
+                            ar_title: "",
+                            category: "",
+                            ar_category: "",
+                            description: "",
+                            ar_description: "",
+                            status: "",
+                            ar_status: "",
+                            images: [],
+                          }
+                        )
+                      }}  
                       className="border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-border dark:text-gray-300 dark:hover:bg-gray-800"
                     >
                       Cancel
@@ -500,7 +678,7 @@ export default function AdminDashboard() {
                       onClick={handleAddProject}
                       className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
                     >
-                      Add Project
+                     {id ? "Update Project" : "Add Project"}
                     </Button>
                   </div>
                 </DialogContent>
@@ -527,7 +705,7 @@ export default function AdminDashboard() {
                     <TableCell>
                       <div className="flex items-center space-x-3">
                         <img
-                          src={project.image || "/placeholder.svg"}
+                          src={project.images[0] || "/placeholder.svg"}
                           alt={project.title}
                           className="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-border"
                         />
@@ -544,15 +722,27 @@ export default function AdminDashboard() {
                         variant="outline"
                         className="capitalize border-gray-300 text-gray-700 bg-gray-50 dark:border-border dark:text-gray-300 dark:bg-gray-800"
                       >
-                        {project.category}
+                       {
+                        categories.find((cat: any) => cat.id === project.category)?.name || "Unknown"
+                       }
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge className={`${getStatusColor(project.status)} text-white capitalize`}>
-                        {project.status}
+                      <Badge className={`${getStatusColor(status.find((stat: any) => stat.id === project.status)?.name || "active")} text-white  capitalize`}>
+                      {
+                        status.find((stat: any) => stat.id === project.status)?.name || "Unknown"
+                      }
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-gray-600 dark:text-gray-300">{project.createdAt}</TableCell>
+                    <TableCell className="text-gray-600 dark:text-gray-300">
+                      {
+                        new Date(project.createdAt).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })
+                      }
+                    </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -571,7 +761,11 @@ export default function AdminDashboard() {
                             <Eye className="mr-2 h-4 w-4" />
                             View
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
+                          <DropdownMenuItem 
+                          onClick={() => {
+                            handleEditProject(project.id)
+                          }}
+                           className="text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
