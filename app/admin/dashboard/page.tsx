@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { LogOut, Plus, MoreHorizontal, Edit, Trash2, Eye, ImageIcon, Building2, Users, FolderOpen } from "lucide-react"
 import { useMutation, useQuery, QueryClient } from "@tanstack/react-query"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from 'react-toastify';
 
 
 
@@ -42,7 +42,6 @@ interface Project {
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const { toast } = useToast()
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [id, setId] = useState<string | null>(null)
   const [newProject, setNewProject] = useState({
@@ -144,11 +143,7 @@ export default function AdminDashboard() {
         console.log('onSuccess: Project created');
         queryClient.invalidateQueries({ queryKey: ['projects'] });
         console.log('queryClient.invalidateQueries called');
-        toast({
-          title: "Project created",
-          description: "Project has been successfully created.",
-          variant: "default",
-        });
+        toast.success("Project has been successfully created.");
         console.log('toast called');
         setNewProject({
           title: "",
@@ -165,11 +160,7 @@ export default function AdminDashboard() {
       },
       onError: (error) => {
         console.error('Error creating product:', error);
-        toast({
-          title: "Error",
-          description: 'Failed to create project',
-          variant: "destructive",
-        });
+        toast.error('Failed to create project');
       },
     }
   );
@@ -212,11 +203,7 @@ export default function AdminDashboard() {
         console.log('onSuccess: Project updated');
         queryClient.invalidateQueries({ queryKey: ['projects'] });
         console.log('queryClient.invalidateQueries called');
-        toast({
-          title: "Project updated",
-          description: "Project has been successfully updated.",
-          variant: "default",
-        });
+        toast.success("Project has been successfully updated.");
         console.log('toast called');
         setNewProject({
           title: "",
@@ -233,11 +220,7 @@ export default function AdminDashboard() {
       },
       onError: (error: any) => {
         console.error('Error updating product:', error?.message || error);
-        toast({
-          title: "Error",
-          description: error?.message || 'Failed to update project',
-          variant: "destructive",
-        });
+        toast.error(error?.message || 'Failed to update project');
       },
     }
   );
@@ -256,20 +239,12 @@ export default function AdminDashboard() {
       console.log('onSuccess: Project deleted');
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       console.log('queryClient.invalidateQueries called');
-      toast({
-        title: "Project deleted",
-        description: "Project has been successfully deleted.",
-        variant: "default",
-      });
+      toast.success("Project has been successfully deleted.");
       console.log('toast called');
     },
     onError: (error) => {
       console.error('Error deleting project:', error);
-      toast({
-        title: "Error",
-        description: 'Failed to delete project',
-        variant: "destructive",
-      });
+      toast.error('Failed to delete project');
     },
   });
 
