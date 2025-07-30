@@ -8,13 +8,16 @@ import { Separator } from "@/components/ui/separator"
 import { Calendar, MapPin, User, Building, Clock, CheckCircle } from "lucide-react"
 import { useLanguage } from "@/components/language-provider"
 import { motion } from "framer-motion"
+import { useQuery } from "@tanstack/react-query"
 
 interface Project {
   id: number
   title: string
+  ar_title?: string
   category: string
-  image: string
+  images: string[]
   description: string
+  ar_description?: string
   fullDescription?: string
   location?: string
   client?: string
@@ -22,6 +25,7 @@ interface Project {
   completedDate?: string
   features?: string[]
   gallery?: string[]
+  status?: string | string[]
 }
 
 interface ProjectDetailModalProps {
@@ -33,6 +37,40 @@ interface ProjectDetailModalProps {
 export function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailModalProps) {
   const { language } = useLanguage()
   const [selectedImage, setSelectedImage] = useState(0)
+       interface Status {
+      id: string
+      name: string
+      ar_name?: string
+    }
+    
+    const { data: status = [], isLoading: isLoadingStatus } = useQuery<Status[]>({
+       queryKey: ['status'],
+       queryFn: async () => {
+        const response = await fetch('/api/status')
+        if (!response.ok) {
+          throw new Error('Network response was not ok')
+        }
+        return response.json()
+       },
+       refetchOnWindowFocus: false,
+      })
+
+      interface Category {
+      id: string
+      name: string
+      ar_name?: string
+    }
+  const { data: categories = [], isLoading: isLoadingCategories } = useQuery<Category[]>({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const response = await fetch('/api/categories')
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+      return response.json()
+    },
+    refetchOnWindowFocus: false,
+  })
 
   if (!project) return null
 
@@ -47,11 +85,10 @@ export function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailMo
       language === "ar" ? "تشطيبات فاخرة" : "Luxury Finishes",
       language === "ar" ? "أنظمة ذكية متطورة" : "Advanced Smart Systems",
     ],
-    gallery: project.gallery || [
-      project.image,
-      "/placeholder.svg?height=400&width=600",
-      "/placeholder.svg?height=400&width=600",
-      "/placeholder.svg?height=400&width=600",
+    gallery: project.images || [
+      project.images[0] || "/placeholder.svg?height=400&width=600",
+      project.images[1] || "/placeholder.svg?height=400&width=600",
+      project.images[2] || "/placeholder.svg?height=400&width=600",
     ],
   }
 
@@ -71,21 +108,60 @@ export function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailMo
           <DialogTitle
             className={`text-xl sm:text-2xl font-bold text-gray-900 dark:text-foreground mb-2 ${language === "ar" ? "text-right" : "text-left"}`}
           >
-            {project.title}
+           {
+            language === "ar" ? project.ar_title  : project.title
+           }
           </DialogTitle>
           <div className={`flex items-center gap-2 ${language === "ar" ? "flex-row-reverse" : "flex-row"}`}>
             <Badge
               variant="outline"
               className="capitalize border-purple-300 text-purple-700 bg-purple-50 dark:border-purple-500/30 dark:text-purple-300 dark:bg-purple-500/10"
             >
-              {project.category}
+              {
+                Array.isArray(project.category)
+                  ? project.category.map((cat, idx) => {
+                    const categoryObj = categories.find(c => c.id === cat)
+                    return (
+                      <span key={idx} className="mx-1">
+                        {language === "ar" ? categoryObj?.ar_name || categoryObj?.name || cat : categoryObj?.name || cat}
+                      </span>
+                    )
+                  })
+                  :((() => {
+                    const categoryObj = categories.find(c => c.id === project.category
+                    )
+                    return (
+                      <span className="mx-1">
+                        {language === "ar" ? categoryObj?.ar_name || categoryObj?.name || project.category : categoryObj?.name || project.category}
+                      </span>
+                    )
+                  })()
+                    )
+              }
             </Badge>
             <Badge
               variant="outline"
               className="border-green-300 text-green-700 bg-green-50 dark:border-green-500/30 dark:text-green-300 dark:bg-green-500/10"
             >
               <CheckCircle className={`w-3 h-3 ${language === "ar" ? "ml-1" : "mr-1"}`} />
-              {language === "ar" ? "مكتمل" : "Completed"}
+                {Array.isArray(project.status)
+                  ? project.status.map((statusId, idx) => {
+                    const statusObj = status.find(s => s.id === statusId)
+                    return (
+                    <span key={idx} className="mx-1">
+                      {language === "ar"
+                      ? statusObj?.ar_name || statusObj?.name || statusId
+                      : statusObj?.name || statusId}
+                    </span>
+                    )
+                  })
+                  : (() => {
+                    const statusObj = status.find(s => s.id === project.status)
+                    return language === "ar"
+                    ? statusObj?.ar_name || statusObj?.name || project.status || "مكتمل"
+                    : statusObj?.name || project.status || "Completed"
+                  })()
+                }
             </Badge>
           </div>
         </DialogHeader>
@@ -133,7 +209,7 @@ export function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailMo
             {/* Project Info Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Project Details */}
-              <div className={`space-y-4 ${language === "ar" ? "text-right" : "text-left"}`}>
+              {/* <div className={`space-y-4 ${language === "ar" ? "text-right" : "text-left"}`}>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-foreground">
                   {language === "ar" ? "تفاصيل المشروع" : "Project Details"}
                 </h3>
@@ -163,7 +239,7 @@ export function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailMo
                     <span className="text-sm">{projectDetails.completedDate}</span>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* Project Features */}
               <div className={`space-y-4 ${language === "ar" ? "text-right" : "text-left"}`}>
@@ -192,10 +268,8 @@ export function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailMo
                 {language === "ar" ? "وصف المشروع" : "Project Description"}
               </h3>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                {project.fullDescription ||
-                  (language === "ar"
-                    ? "هذا المشروع يمثل نموذجاً متميزاً من أعمال شركة كورت للمقاولات، حيث تم تنفيذه بأعلى معايير الجودة والاحترافية. يتضمن المشروع تصميماً معمارياً متطوراً ومواد بناء عالية الجودة، مع الاهتمام بكافة التفاصيل لضمان رضا العميل وتحقيق أفضل النتائج."
-                    : "This project represents a distinguished example of Court Contracting Company's work, executed with the highest standards of quality and professionalism. The project includes advanced architectural design and high-quality building materials, with attention to all details to ensure client satisfaction and achieve the best results.")}
+                {language === "ar" ? project.ar_description : project.description 
+                  || "No description available."}
               </p>
             </div>
 
@@ -212,22 +286,22 @@ export function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailMo
                 <Building className={`w-4 h-4 ${language === "ar" ? "ml-2" : "mr-2"}`} />
                 {language === "ar" ? "طلب مشروع مماثل" : "Request Similar Project"}
               </Button>
-              <Button
+                <Button
                 variant="outline"
                 className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-border dark:text-gray-300 dark:hover:bg-gray-800 bg-transparent"
-                onClick={() => {
-                  // Share functionality
+                onClick={async () => {
+                  // Updated share functionality with more data
                   if (navigator.share) {
-                    navigator.share({
-                      title: project.title,
-                      text: project.description,
-                      url: window.location.href,
-                    })
+                  await navigator.share({
+                    title: language === "ar" ? project.ar_title || project.title : project.title,
+                    text: language === "ar" ? project.ar_description || project.description : project.description,
+                    url: window.location.href,
+                  })
                   }
                 }}
-              >
+                >
                 {language === "ar" ? "مشاركة المشروع" : "Share Project"}
-              </Button>
+                </Button>
             </div>
           </div>
         </div>

@@ -29,7 +29,7 @@ export async function POST(request: Request) {
         // Generate token
         const token = signToken({ id: user.id, email: user.email });
         // Set token in cookies
-        const response = NextResponse.json({ message: "User authenticated successfully" }, { status: 200 });
+        const response = NextResponse.json({ message: "User authenticated successfully", token }, { status: 200 });
         response.cookies.set("token", token, { httpOnly: true });
         return response;
 

@@ -9,6 +9,10 @@ import { Menu, Moon, Sun, Globe, ChevronDown, LogIn, ArrowRight, Sparkles } from
 import { useTheme } from "next-themes"
 import { useLanguage } from "@/components/language-provider"
 import { motion, AnimatePresence } from "framer-motion"
+import { useRouter } from "next/navigation"
+import {
+  getCookie,
+} from 'cookies-next/client';
 
 export function AceternityNavbar() {
   const [mounted, setMounted] = useState(false)
@@ -16,6 +20,8 @@ export function AceternityNavbar() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const { theme, setTheme, systemTheme } = useTheme()
   const { language, setLanguage, t } = useLanguage()
+
+  const navigate = useRouter()
 
   useEffect(() => {
     setMounted(true)
@@ -32,6 +38,8 @@ export function AceternityNavbar() {
       contactSection.scrollIntoView({ behavior: "smooth" })
     }
   }
+  const token = getCookie('authToken') ;
+  console.log("authToken from cookies:", token);
 
   const navItems = [
     { name: t("nav.home"), href: "#home" },
@@ -271,20 +279,30 @@ export function AceternityNavbar() {
                 <span className="sr-only">Toggle theme</span>
               </Button>
             </motion.div>
-
-            {/* Login Button */}
+            {/* Login/Dashboard Button */}
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="hidden md:block">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => (window.location.href = "/admin/login")}
-                className="border-gray-300/80 text-gray-600 hover:text-gray-900 hover:bg-gray-50/80 hover:border-gray-400/80 dark:border-gray-600/50 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800/50 dark:hover:border-gray-500/50 px-4 py-2 rounded-xl transition-all duration-300"
-              >
-                <LogIn className={`${language === "ar" ? "ml-2" : "mr-2"} h-3.5 w-3.5`} />
-                {language === "ar" ? "دخول" : "Login"}
-              </Button>
+              {token ? (
+                <Button
+                  size="sm"
+                  onClick={() => navigate.push("/admin/dashboard")}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <LogIn className={`${language === "ar" ? "ml-2" : "mr-2"} h-3.5 w-3.5`} />
+                  {language === "ar" ? "لوحة التحكم" : "Dashboard"}
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => navigate.push("/admin/login")}
+                  className="border-gray-300/80 text-gray-600 hover:text-gray-900 hover:bg-gray-50/80 hover:border-gray-400/80 dark:border-gray-600/50 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800/50 dark:hover:border-gray-500/50 px-4 py-2 rounded-xl transition-all duration-300"
+                >
+                  <LogIn className={`${language === "ar" ? "ml-2" : "mr-2"} h-3.5 w-3.5`} />
+                  {language === "ar" ? "دخول" : "Login"}
+                </Button>
+              )}
             </motion.div>
-
+        
             {/* CTA Button - Changed to Contact Us */}
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="hidden sm:block">
               <Button
@@ -298,7 +316,9 @@ export function AceternityNavbar() {
             </motion.div>
 
             {/* Mobile Menu */}
-            <Sheet>
+            <Sheet
+           
+            >
               <SheetTrigger asChild className="lg:hidden">
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
@@ -313,7 +333,7 @@ export function AceternityNavbar() {
               </SheetTrigger>
               <SheetContent
                 side={language === "ar" ? "left" : "right"}
-                className="bg-white/98 dark:bg-background/98 backdrop-blur-xl border-gray-200/80 dark:border-border/80 w-80"
+                className="bg-white/98 z-[999] dark:bg-background/98 backdrop-blur-xl border-gray-200/80 dark:border-border/80 w-80"
               >
                 <div className="flex flex-col space-y-6 mt-8">
                   {/* Mobile Logo - Made Bigger */}

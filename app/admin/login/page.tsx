@@ -19,6 +19,11 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 
+import {
+  setCookie,
+
+} from 'cookies-next/client';
+
 
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false)
@@ -37,9 +42,13 @@ export default function AdminLogin() {
         body: JSON.stringify({ email, password }) // Assuming the API expects 'email' instead of 'email'
       })
       if (!response.ok) {
-        throw new Error('Login failed')
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Login failed');
       }
-      return response.json()
+      const data = await response.json();
+      console.log("Login response:", data.token);
+      setCookie('authToken', data.token)
+      return data
     },
     // Optionally, you can add onSuccess/onError here if needed
   });

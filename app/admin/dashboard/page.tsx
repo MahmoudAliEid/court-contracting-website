@@ -20,13 +20,13 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { LogOut, Plus, MoreHorizontal, Edit, Trash2, Eye, ImageIcon, Building2, Users, FolderOpen } from "lucide-react"
-import { useMutation, useQuery, QueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from 'react-toastify';
 
 
 
 
-const queryClient = new QueryClient()
+
 
 
 interface Project {
@@ -43,7 +43,9 @@ interface Project {
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [isOpenDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [id, setId] = useState<string | null>(null)
+  const queryClient = useQueryClient(); 
   const [newProject, setNewProject] = useState({
     title: "",
     ar_title: "",
@@ -57,9 +59,25 @@ export default function AdminDashboard() {
   })
   const router = useRouter()
 
+  const resetProjectForm = () => {
+  setNewProject({
+    title: "",
+    ar_title: "",
+    category: "",
+    ar_category: "",
+    description: "",
+    ar_description: "",
+    status: "",
+    ar_status: "",
+    images: [],
+  });
+  setId(null);
+  setIsAddDialogOpen(false);
+}
+
   // Check authentication on mount
 
-  const { data: projects = [], isLoading } = useQuery<Project[]>({
+  const { data: projects = [], isLoading, refetch } = useQuery<Project[]>({
     queryKey: ['projects'],
     queryFn: async () => {
       const response = await fetch('/api/products/get-all-products')
@@ -68,10 +86,11 @@ export default function AdminDashboard() {
       }
       return response.json()
     },
-   staleTime: 30 * 1000, // 30 seconds
+    staleTime: 30 * 1000, // 30 seconds
     retry: 2,
     retryDelay: 1000,
   })
+
  
   interface Category {
     id: string
@@ -145,18 +164,7 @@ export default function AdminDashboard() {
         console.log('queryClient.invalidateQueries called');
         toast.success("Project has been successfully created.");
         console.log('toast called');
-        setNewProject({
-          title: "",
-          ar_title: "",
-          category: "",
-          ar_category: "",
-          description: "",
-          ar_description: "",
-          status: "",
-          ar_status: "",
-          images: [],
-        });
-        setIsAddDialogOpen(false);
+        resetProjectForm()
       },
       onError: (error) => {
         console.error('Error creating product:', error);
@@ -166,7 +174,7 @@ export default function AdminDashboard() {
   );
 
   // Define mutateUpdate at the top level, using the latest id via closure
-  const { mutate: updateProject } = useMutation(
+  const { mutate: updateProject, isLoading: isUpdatingProject } = useMutation(
     async ({ product, id }: { product: { title: string; category: string; ar_title: string; description: string; ar_description: string; ar_category: string; ar_status: string; images: string[]; status: string }, id: string }) => {
       const { title, category, ar_title, ar_description, ar_category, ar_status, description, images, status } = product;
       const formData = new FormData();
@@ -205,18 +213,7 @@ export default function AdminDashboard() {
         console.log('queryClient.invalidateQueries called');
         toast.success("Project has been successfully updated.");
         console.log('toast called');
-        setNewProject({
-          title: "",
-          ar_title: "",
-          category: "",
-          ar_category: "",
-          description: "",
-          ar_description: "",
-          status: "",
-          ar_status: "",
-          images: [],
-        });
-        setIsAddDialogOpen(false);
+        resetProjectForm()
       },
       onError: (error: any) => {
         console.error('Error updating product:', error?.message || error);
@@ -289,14 +286,14 @@ export default function AdminDashboard() {
    } else {
     createProject(newProject)
    }
-    // setIsAddDialogOpen(false)
-    setId(null)
+  
   }
     
   
 
   const handleDeleteProject = (id: string) => {
     deleteProject(id);
+    setId(null);
   }
 
   const handleEditProject = (id: string) => {
@@ -409,7 +406,19 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-gray-900 dark:text-foreground">
-                {projects.filter((p) => p.status === "active").length}
+                {/* {projects.filter((p) => {
+                  const statusObj = status.find((stat: any) => stat.id === p.status);
+                  return statusObj?.name === "active";
+                }).length} */}
+                {(() => {
+                  const activeStatusObj = status.find((s: any) => s.name === "Active");
+                 
+                  const activeStatus = activeStatusObj ? activeStatusObj.id : null;
+                 
+                  return activeStatus
+                    ? projects.filter((p) => p.status === activeStatus).length
+                    : projects.filter((p) => p.status === "active").length;
+                })()}
               </div>
               <p className="text-xs text-gray-500 dark:text-muted-foreground">Currently in progress</p>
             </CardContent>
@@ -422,7 +431,12 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-gray-900 dark:text-foreground">
-                {projects.filter((p) => p.status === "completed").length}
+            {
+              projects.filter((p) => {
+                const statusObj = status.find((stat: any) => stat.id === p.status);
+                return statusObj?.name === "Completed";
+              }).length
+            }
               </div>
               <p className="text-xs text-gray-500 dark:text-muted-foreground">Successfully finished</p>
             </CardContent>
@@ -435,7 +449,13 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-gray-900 dark:text-foreground">
-                {projects.filter((p: Project) => p.status === "draft").length}
+              {(() => {
+                const draftStatusObj = status.find((s: any) => s.name === "Draft");
+                const draftStatus = draftStatusObj ? draftStatusObj.id : null;
+                return draftStatus
+                  ? projects.filter((p) => p.status === draftStatus).length
+                  : projects.filter((p) => p.status === "draft").length;
+              })()}
               </div>
               <p className="text-xs text-gray-500 dark:text-muted-foreground">Pending approval</p>
             </CardContent>
@@ -653,7 +673,17 @@ export default function AdminDashboard() {
                       onClick={handleAddProject}
                       className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
                     >
-                     {id ? "Update Project" : "Add Project"}
+                      {(isCreatingProject || isUpdatingProject) ? (
+                      <span>
+                        <svg className="animate-spin h-4 w-4 mr-2 inline" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                        </svg>
+                        {id ? "Updating..." : "Adding..."}
+                      </span>
+                      ) : (
+                      id ? "Update Project" : "Add Project"
+                      )}
                     </Button>
                   </div>
                 </DialogContent>
@@ -732,10 +762,10 @@ export default function AdminDashboard() {
                           align="end"
                           className="bg-white dark:bg-background border-gray-200 dark:border-border"
                         >
-                          <DropdownMenuItem className="text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
+                          {/* <DropdownMenuItem className="text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
                             <Eye className="mr-2 h-4 w-4" />
                             View
-                          </DropdownMenuItem>
+                          </DropdownMenuItem> */}
                           <DropdownMenuItem 
                           onClick={() => {
                             handleEditProject(project.id)
@@ -746,21 +776,56 @@ export default function AdminDashboard() {
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
-                            onClick={() => handleDeleteProject(project.id)}
+                            onClick={() => {
+                              setIsDeleteDialogOpen(true);
+                              setId(project.id);
+                            }}
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete
+                            
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}
+                {
+                        id && isOpenDeleteDialogOpen && <DeleteDialog isOpen={isOpenDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)} onDelete={() => handleDeleteProject(id)} />
+                            }
               </TableBody>
             </Table>
+
           </CardContent>
         </Card>
       </div>
+      
     </div>
+  )
+}
+
+
+const DeleteDialog = ({ isOpen, onClose, onDelete }: { isOpen: boolean; onClose: () => void; onDelete: () => void }) => {
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Are you sure you want to delete this project?</DialogTitle>
+        </DialogHeader>
+        <div className="flex justify-end space-x-2">
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant="destructive" onClick={
+            () => {
+              onDelete();
+              onClose();
+            }
+          }>
+            Delete
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
