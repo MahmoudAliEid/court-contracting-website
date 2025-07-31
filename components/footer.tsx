@@ -123,7 +123,7 @@ export function Footer() {
                 className={`flex items-center gap-2 `}
               >
                 <Mail className="h-4 w-4 text-purple-600 dark:text-primary flex-shrink-0" />
-                <span className="text-gray-600 dark:text-muted-foreground">COURT.CO@HOTMAIL.COM</span>
+                <span className="text-gray-600 dark:text-muted-foreground">info@court.sa</span>
               </div>
               <div
                 className={`flex items-center gap-2 `}
