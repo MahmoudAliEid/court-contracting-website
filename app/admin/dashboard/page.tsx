@@ -363,24 +363,26 @@ export default function AdminDashboard() {
       {/* Header */}
       <header className="bg-white dark:bg-background border-b border-gray-200 dark:border-border shadow-sm">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-foreground">Admin Dashboard</h1>
-              <Badge
-                variant="outline"
-                className="border-purple-300 text-purple-700 bg-purple-50 dark:border-purple-500/30 dark:text-purple-300 dark:bg-purple-500/10"
-              >
-                Court Contracting Company
-              </Badge>
-            </div>
-            <Button
-              variant="outline"
-              onClick={handleLogout}
-              className="border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-border dark:text-gray-300 dark:hover:bg-gray-800 bg-transparent"
-            >
-            <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </Button>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-foreground break-words">
+            Admin Dashboard
+          </h1>
+          <Badge
+            variant="outline"
+            className="border-purple-300 text-purple-700 bg-purple-50 dark:border-purple-500/30 dark:text-purple-300 dark:bg-purple-500/10 whitespace-nowrap"
+          >
+            Court Contracting Company
+          </Badge>
+        </div>
+        <Button
+          variant="outline"
+          onClick={handleLogout}
+          className="border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-border dark:text-gray-300 dark:hover:bg-gray-800 bg-transparent w-full sm:w-auto"
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          Logout
+        </Button>
           </div>
         </div>
       </header>
@@ -467,8 +469,10 @@ export default function AdminDashboard() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-gray-900 dark:text-foreground">Projects Management</CardTitle>
-                <CardDescription className="text-gray-600 dark:text-muted-foreground">
+                <CardTitle className="text-gray-900 dark:text-foreground text-base sm:text-lg md:text-xl">
+                  Projects Management
+                </CardTitle>
+                <CardDescription className="text-gray-600 dark:text-muted-foreground text-xs sm:text-sm md:text-base">
                   Manage your construction projects and portfolio
                 </CardDescription>
               </div>

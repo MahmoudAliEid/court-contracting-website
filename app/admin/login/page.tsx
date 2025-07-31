@@ -62,13 +62,7 @@ export default function AdminLogin() {
     // Simulate loading
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    // Simple authentication (in production, use proper authentication)
-    // if (credentials.email === "admin" && credentials.password === "court2024") {
-    //   localStorage.setItem("adminAuth", "true")
-    //   router.push("/admin/dashboard")
-    // } else {
-    //   setError("Invalid email or password")
-    // }
+   
     mutate.mutate(credentials, {
       onSuccess: (data) => {
         localStorage.setItem("adminAuth", "true")
@@ -225,14 +219,14 @@ export default function AdminLogin() {
               </motion.div>
             </motion.form>
 
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.7 }}
               className="mt-6 text-center"
             >
               <p className="text-xs text-muted-foreground">Demo credentials: admin / court2024</p>
-            </motion.div>
+            </motion.div> */}
           </CardContent>
         </Card>
       </motion.div>

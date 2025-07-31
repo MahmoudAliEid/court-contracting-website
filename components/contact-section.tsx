@@ -44,19 +44,12 @@ export function ContactSection() {
     {
       icon: Mail,
       title: t("contact.email"),
-      value: "COURT.CO@HOTMAIL.COM",
-      href: "mailto:COURT.CO@HOTMAIL.COM",
+      value: "info@court.sa",
+      href: "mailto:info@court.sa",
       color: "text-blue-600",
       bgColor: "bg-blue-100 dark:bg-blue-500/10",
     },
-    {
-      icon: Globe,
-      title: t("contact.website"),
-      value: "www.court.com",
-      href: "https://www.court.com",
-      color: "text-purple-600",
-      bgColor: "bg-purple-100 dark:bg-purple-500/10",
-    },
+   
     {
       icon: MapPin,
       title: language === "ar" ? "الموقع" : "Location",

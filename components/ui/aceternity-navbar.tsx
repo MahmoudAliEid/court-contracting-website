@@ -364,6 +364,55 @@ export function AceternityNavbar() {
                       >
                         <Globe className="h-4 w-4" />
                       </Button>
+                         {/* Login/Dashboard Button */}
+           
+              {token ? (
+                <Button
+                  size="sm"
+                  onClick={() => navigate.push("/admin/dashboard")}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  {/* Use a dashboard icon instead of LogIn */}
+                  <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`${language === "ar" ? "ml-2" : "mr-2"} h-4 w-4`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  >
+                  <rect x="3" y="3" width="7" height="9" rx="2" />
+                  <rect x="14" y="3" width="7" height="5" rx="2" />
+                  <rect x="14" y="12" width="7" height="9" rx="2" />
+                  <rect x="3" y="16" width="7" height="5" rx="2" />
+                  </svg>  
+                
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => navigate.push("/admin/login")}
+                  className="border-gray-300/80 text-gray-600 hover:text-gray-900 hover:bg-gray-50/80 hover:border-gray-400/80 dark:border-gray-600/50 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800/50 dark:hover:border-gray-500/50 px-4 py-2 rounded-xl transition-all duration-300"
+                >
+                  {/* Suabel icon for login */}
+                  <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`${language === "ar" ? "ml-2" : "mr-2"} h-4 w-4`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-7.5A2.25 2.25 0 003.75 5.25v13.5A2.25 2.25 0 006 21h7.5a2.25 2.25 0 002.25-2.25V15M18 12l-3-3m0 0l3-3m-3 3h9"
+                  />
+                  </svg>
+                 
+                </Button>
+              )}
+           
                     </div>
                     <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                       {language === "ar" ? "الإعدادات" : "Settings"}
