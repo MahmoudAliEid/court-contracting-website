@@ -14,10 +14,7 @@ export default function HomePage() {
       <AceternityNavbar />
       <HeroSection />
       <AboutSection />
-      <WhyChooseSection />
-      <VisionSection />
       <ServicesSection />
-      <ProjectsSection />
       <ContactSection />
       <Footer />
     </main>
