@@ -42,56 +42,56 @@ export function AceternityNavbar() {
   console.log("authToken from cookies:", token);
 
   const navItems = [
-    { name: t("nav.home"), href: "#home" },
+    { name: t("nav.home"), href: "/" },
     {
       name: t("nav.about"),
-      href: "#about",
-      dropdown: [
-        {
-          name: t("nav.about"),
-          href: "#about",
-          description: language === "ar" ? "تعرف على شركتنا" : "Learn about our company",
-        },
-        {
-          name: t("nav.vision"),
-          href: "#vision",
-          description: language === "ar" ? "رؤيتنا ورسالتنا" : "Our vision and mission",
-        },
-        {
-          name: t("nav.why-choose"),
-          href: "#why-choose",
-          description: language === "ar" ? "ما يميزنا عن الآخرين" : "What sets us apart",
-        },
-      ],
+      href: "/about",
+      // dropdown: [
+      //   {
+      //     name: t("nav.about"),
+      //     href: "#about",
+      //     description: language === "ar" ? "تعرف على شركتنا" : "Learn about our company",
+      //   },
+      //   {
+      //     name: t("nav.vision"),
+      //     href: "#vision",
+      //     description: language === "ar" ? "رؤيتنا ورسالتنا" : "Our vision and mission",
+      //   },
+      //   {
+      //     name: t("nav.why-choose"),
+      //     href: "#why-choose",
+      //     description: language === "ar" ? "ما يميزنا عن الآخرين" : "What sets us apart",
+      //   },
+      // ],
     },
     {
       name: t("nav.services"),
-      href: "#services",
-      dropdown: [
-        {
-          name: language === "ar" ? "إنشاء المباني" : "Building Construction",
-          href: "#services",
-          description: language === "ar" ? "مباني سكنية وتجارية" : "Residential & commercial buildings",
-        },
-        {
-          name: language === "ar" ? "الترميم والتشطيب" : "Renovation & Finishing",
-          href: "#services",
-          description: language === "ar" ? "أعمال الترميم والتشطيبات" : "Restoration and finishing works",
-        },
-        {
-          name: language === "ar" ? "التصميم الداخلي" : "Interior Design",
-          href: "#services",
-          description: language === "ar" ? "تصميم داخلي احترافي" : "Professional interior design",
-        },
-        {
-          name: language === "ar" ? "الأعمال الكهربائية" : "Electrical Works",
-          href: "#services",
-          description: language === "ar" ? "أعمال كهربائية وميكانيكية" : "Electrical & mechanical works",
-        },
-      ],
+      href: "/ourservices",
+      // dropdown: [
+      //   {
+      //     name: language === "ar" ? "إنشاء المباني" : "Building Construction",
+      //     href: "#services",
+      //     description: language === "ar" ? "مباني سكنية وتجارية" : "Residential & commercial buildings",
+      //   },
+      //   {
+      //     name: language === "ar" ? "الترميم والتشطيب" : "Renovation & Finishing",
+      //     href: "#services",
+      //     description: language === "ar" ? "أعمال الترميم والتشطيبات" : "Restoration and finishing works",
+      //   },
+      //   {
+      //     name: language === "ar" ? "التصميم الداخلي" : "Interior Design",
+      //     href: "#services",
+      //     description: language === "ar" ? "تصميم داخلي احترافي" : "Professional interior design",
+      //   },
+      //   {
+      //     name: language === "ar" ? "الأعمال الكهربائية" : "Electrical Works",
+      //     href: "#services",
+      //     description: language === "ar" ? "أعمال كهربائية وميكانيكية" : "Electrical & mechanical works",
+      //   },
+      // ],
     },
-    { name: t("nav.projects"), href: "#projects" },
-    { name: t("nav.contact"), href: "#contact" },
+    { name: t("nav.projects"), href: "/ourprojects" },
+    { name: t("nav.contact"), href: "/contactus" },
   ]
 
   const currentTheme = theme === "system" ? systemTheme : theme
@@ -141,11 +141,11 @@ export function AceternityNavbar() {
             <Link href="/" className="flex items-center group">
               <div className="relative">
                 <Image
-                  src="/images/court-logo.png"
+                  src="/images/IMG_3098.png"
                   alt="Court Contracting Company"
                   width={200}
                   height={65}
-                  className="h-14 w-auto transition-all duration-300 group-hover:brightness-110"
+                  className="h-14 w-auto transition-all duration-300 group-hover:brightness-110 rounded-md"
                   priority
                 />
                 <div className="absolute -inset-2 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-pink-500/0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />

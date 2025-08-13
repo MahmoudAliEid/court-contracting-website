@@ -6,6 +6,9 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { LanguageProvider } from "@/components/language-provider"
 import QueryProvider from "@/components/QueryProvider";
 import AppToaster from "./toaster";
+import { Footer } from "@/components/footer"
+
+
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const cairo = Cairo({ subsets: ["arabic"], variable: "--font-cairo" })
@@ -72,6 +75,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${cairo.variable} font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange={false}>
           <LanguageProvider>{children}</LanguageProvider>
+
         </ThemeProvider>
         {/* Toast notifications */}
         <AppToaster />
