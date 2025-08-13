@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import { prisma } from "@/prisma/client";
 import { NextResponse } from "next/server";
 import { authenticateUser } from "@/lib/auth";
 import upload from "@/lib/upload";

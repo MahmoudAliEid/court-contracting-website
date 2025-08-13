@@ -1,10 +1,9 @@
 
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/prisma/client";
 import { NextResponse } from "next/server";
 import { authenticateUser } from "@/lib/auth";
 import upload from "@/lib/upload";
 import { Readable } from "stream";
-const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   try {

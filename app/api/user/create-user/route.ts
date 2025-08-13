@@ -1,20 +1,7 @@
-import { PrismaClient } from "@prisma/client";
-// Use a singleton pattern for PrismaClient to avoid multiple instances in Next.js
-let prisma: PrismaClient;
-if (process.env.NODE_ENV === "production") {
-  prisma = new PrismaClient();
-} else {
-  // @ts-ignore
-  if (!global.prisma) {
-    // @ts-ignore
-    global.prisma = new PrismaClient();
-  }
-  // @ts-ignore
-  prisma = global.prisma;
-}
 import { NextResponse } from "next/server";
 import { signToken } from "@/lib/auth";
 import bcrypt from 'bcrypt';
+import { prisma } from "@/prisma/client";
 
 export async function POST(request: Request) {
     const { name, email, password } = await request.json();

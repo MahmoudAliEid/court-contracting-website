@@ -1,9 +1,8 @@
 
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/prisma/client";
 import { NextResponse } from "next/server";
 import { signToken } from "@/lib/auth";
 import bcrypt from 'bcrypt';
-const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
     const { name, email, password } = await request.json();

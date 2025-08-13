@@ -2,10 +2,9 @@
 // npx prisma studio
 
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/prisma/client";
 import { signToken } from "@/lib/auth";
-import bcrypt from 'bcrypt';
-const prisma = new PrismaClient();    
+import bcrypt from 'bcrypt';    
 
 // GET /api/user
 export async function POST(request: Request) {
