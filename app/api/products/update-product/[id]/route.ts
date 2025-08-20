@@ -22,8 +22,8 @@ if (!token) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Get id from params
-  const id = params.id;
+  // Get id from params (must await in Next.js App Router)
+  const { id } = await params;
   if (!id) {
     return NextResponse.json({ error: "Product id is required in params" }, { status: 400 });
   }
@@ -31,16 +31,17 @@ if (!token) {
 
   // Parse FormData for update
   const formData = await request.formData();
-  const updateFields: any = {
-    title: formData.get("title")?.toString() || "",
-    ar_title: formData.get("ar_title")?.toString() || "",
-    description: formData.get("description")?.toString() || "",
-    ar_description: formData.get("ar_description")?.toString() || "",
-    category: formData.get("category")?.toString() || "",
-    ar_category: formData.get("ar_category")?.toString() || "",
-    status: formData.get("status")?.toString() || "",
-    ar_status: formData.get("ar_status")?.toString() || "",
-  };
+  const updateFields: any = {};
+  const fieldNames = [
+    "title", "ar_title", "description", "ar_description",
+    "category", "ar_category", "status", "ar_status"
+  ];
+  for (const name of fieldNames) {
+    const value = formData.get(name);
+    if (value && value.toString().trim() !== "") {
+      updateFields[name] = value.toString();
+    }
+  }
   // Images: collect all files
   const images: File[] = [];
   for (const [key, value] of formData.entries()) {
@@ -55,7 +56,7 @@ if (!token) {
       images.map(async (file) => Buffer.from(await file.arrayBuffer()))
     );
     const uploadedImages = await upload({ images: imageBuffers });
-    updateFields.images = uploadedImages.map((image: any) => image.secure_url);
+    updateFields.images = uploadedImages;
   }
 
   // Videos: collect all video files
@@ -72,7 +73,7 @@ if (!token) {
       videos.map(async (file) => Buffer.from(await file.arrayBuffer()))
     );
     const uploadedVideos = await uploadingVideos({ videos: videoBuffers });
-    updateFields.videos = uploadedVideos.map((video: any) => video.secure_url);
+    updateFields.videos = uploadedVideos.map((video: any) => video.secure_url || video);
   }
 
   try {

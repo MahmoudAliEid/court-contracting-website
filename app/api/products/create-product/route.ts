@@ -61,8 +61,8 @@ export async function POST(request: Request) {
     );
     let imagesUrls: string[] = [];
     if (imageBuffers.length > 0) {
-      const uploadedImages = await upload({ images: imageBuffers });
-      imagesUrls = uploadedImages.map((image: any) => image.secure_url);
+  const uploadedImages = await upload({ images: imageBuffers });
+  imagesUrls = uploadedImages;
     }
 
     // Convert Video File objects to Buffers for upload
@@ -71,8 +71,8 @@ export async function POST(request: Request) {
     );
     let videosUrls: string[] = [];
     if (videoBuffers.length > 0) {
-      const uploadedVideos = await uploadingVideos({ videos: videoBuffers });
-      videosUrls = uploadedVideos.map((video: any) => video.secure_url);
+  const uploadedVideos = await uploadingVideos({ videos: videoBuffers });
+  videosUrls = uploadedVideos.map((video: any) => video.secure_url || video);
     }
 
     const product = await prisma.product.create({

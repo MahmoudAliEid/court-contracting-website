@@ -1,40 +1,23 @@
-
-import { NextResponse } from "next/server";
-
-import { v2 as cloudinary } from "cloudinary";
-
-// Cloudinary config (move to a shared util if needed)
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
+import path from "path";
+import fs from "fs/promises";
 
 interface UploadingParams {
-    images: Buffer[];
+  images: Buffer[];
 }
 
 const uploading = async ({ images }: UploadingParams) => {
+  // Save images to public/ourProjects
+  const uploadDir = path.join(process.cwd(), "public", "ourProjects");
+  await fs.mkdir(uploadDir, { recursive: true });
 
-interface CloudinaryUploadResult {
-    secure_url?: string;
-    [key: string]: any;
-}
+  const urls: string[] = [];
+  for (let i = 0; i < images.length; i++) {
+    const filename = `image_${Date.now()}_${i + 1}.jpg`;
+    const filePath = path.join(uploadDir, filename);
+    await fs.writeFile(filePath, images[i]);
+    urls.push(`/ourProjects/${filename}`);
+  }
+  return urls;
+};
 
-const uploadPromises: Promise<CloudinaryUploadResult>[] = images.map((image: Buffer, idx: number) => {
-    return new Promise<CloudinaryUploadResult>((resolve, reject) => {
-        cloudinary.uploader.upload_stream(
-            { folder: "court", public_id: `image_${idx + 1}` },
-            (error: Error | undefined, result: CloudinaryUploadResult | undefined) => {
-                if (error) reject(error);
-                else resolve(result as CloudinaryUploadResult);
-            }
-        ).end(image);
-    });
-});
-
-return Promise.all(uploadPromises);
-}
-
-export default uploading
+export default uploading;

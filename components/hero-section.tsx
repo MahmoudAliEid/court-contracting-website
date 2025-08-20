@@ -57,7 +57,7 @@ export function HeroSection() {
     <section
       id="home"
       ref={heroRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950"
+      className="relative min-h-screen pb-10 flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950"
       style={{ paddingTop: "100px" }}
     >
       {/* Animated Background Beams */}
@@ -67,34 +67,38 @@ export function HeroSection() {
 
       {/* Additional floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {typeof window !== 'undefined' && [...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ 
-              x: Math.random() * (window.innerWidth || 1920),
-              y: Math.random() * (window.innerHeight || 1080),
-              opacity: 0 
-            }}
-            animate={{ 
-              y: [null, Math.random() * (window.innerHeight || 1080)],
-              opacity: [0, 0.3, 0]
-            }}
-            transition={{
-              duration: Math.random() * 10 + 10,
-              repeat: Infinity,
-              delay: Math.random() * 5
-            }}
-            className="absolute w-1 h-1 bg-purple-400 rounded-full"
-          />
-        ))}
+        {typeof window !== "undefined" &&
+          [...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{
+                x: Math.random() * (window.innerWidth || 1920),
+                y: Math.random() * (window.innerHeight || 1080),
+                opacity: 0,
+              }}
+              animate={{
+                y: [null, Math.random() * (window.innerHeight || 1080)],
+                opacity: [0, 0.3, 0],
+              }}
+              transition={{
+                duration: Math.random() * 10 + 10,
+                repeat: Infinity,
+                delay: Math.random() * 5,
+              }}
+              className="absolute w-1 h-1 bg-purple-400 rounded-full"
+            />
+          ))}
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Grid overlay for modern design */}
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M30 0v30H0v30h30V30h30V0z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-        }}></div>
-        
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M30 0v30H0v30h30V30h30V0z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        ></div>
+
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -108,17 +112,76 @@ export function HeroSection() {
               <motion.div
                 initial={{ scale: 0, opacity: 0, y: -20 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2, type: "spring", stiffness: 200 }}
+                transition={{
+                  duration: 0.6,
+                  delay: 0.2,
+                  type: "spring",
+                  stiffness: 200,
+                }}
                 className="inline-flex justify-start text-start px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 <Star
-                  className={`${language === "ar" ? "ml-2" : "mr-2"} w-4 h-4 text-yellow-400`}
+                  className={`${
+                    language === "ar" ? "ml-2" : "mr-2"
+                  } w-4 h-4 text-yellow-400`}
                 />
                 <span className="bg-gradient-to-r from-yellow-400 to-yellow-300 bg-clip-text text-transparent font-semibold">
                   {language === "ar"
                     ? "الشركة الرائدة في المقاولات"
                     : "Leading Construction Company"}
                 </span>
+              </motion.div>
+              {/* "court للمقاولات" in logo font with simple animation */}
+              {/* Big Logo - "court للمقاولات" in logo font with simple animation */}
+              <motion.div
+                initial={{ x: -50, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
+                className="
+                    relative
+                    z-30
+                   
+                    mb-4
+                    lg:mb-8
+                  "
+                whileHover={{
+                  scale: 1.02,
+                  z: 50,
+                  transition: { duration: 0.3 },
+                }}
+              >
+                <motion.div
+                  animate={{
+                    y: [0, -5, 0],
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                  className="relative"
+                >
+                  <motion.img
+                    src="/images/court-logo.png"
+                    alt="Court Contracting Logo"
+                    className="
+                        h-32 w-auto
+                        sm:h-44
+                        md:h-56
+                        lg:h-64
+                        xl:h-72
+                        2xl:h-80
+                        max-w-full
+                        object-contain
+                        transition-all
+                        duration-300
+                      "
+                    initial={{ scale: 1.05 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 1.2, delay: 0.5 }}
+                    style={{ objectFit: "contain" }}
+                  />
+                </motion.div>
               </motion.div>
 
               {/* Main Heading with staggered animation */}
@@ -213,7 +276,7 @@ export function HeroSection() {
                   <Button
                     size="lg"
                     onClick={() => {
-                      router.push('/ourservices')
+                      router.push("/ourservices");
                     }}
                     className={`group bg-gradient-to-r my-2 sm:my-4 w-full sm:w-auto from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 rounded-2xl border-0 relative overflow-hidden ${
                       language === "ar" ? "sm:ml-4" : "sm:mr-4"
@@ -224,14 +287,13 @@ export function HeroSection() {
                     <span className="relative z-10">
                       {language === "ar" ? "خدماتنا" : "Our Services"}
                     </span>
-                      <ArrowRight
+                    <ArrowRight
                       className={`${
                         language === "ar" ? "ml-2 rotate-180" : "mr-2"
                       } h-5 w-5 transition-transform group-hover:${
                         language === "ar" ? "translate-x-1" : "-translate-x-1"
                       } relative z-10`}
                     />
-                  
                   </Button>
                 </motion.div>
 
@@ -252,8 +314,8 @@ export function HeroSection() {
                     }`}
                   >
                     <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    
-                      <ArrowRight
+
+                    <ArrowRight
                       className={`${
                         language === "ar" ? "ml-2 rotate-180" : "mr-2"
                       } h-5 w-5 transition-transform group-hover:${
@@ -320,9 +382,8 @@ export function HeroSection() {
 
             {/* Main Container for Overlapping Mood Board Layout */}
             <div className="relative w-full max-w-[600px] h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] xl:h-[800px]">
-              
               {/* Image 1 - Large Left Vertical (like A in your reference) */}
-                <motion.div
+              <motion.div
                 initial={{ x: -50, opacity: 0, rotateY: -10 }}
                 animate={{ x: 0, opacity: 1, rotateY: 0 }}
                 transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
@@ -337,39 +398,39 @@ export function HeroSection() {
                 whileHover={{
                   scale: 1.02,
                   z: 50,
-                  transition: { duration: 0.3 }
+                  transition: { duration: 0.3 },
                 }}
-                >
+              >
                 <motion.div
                   animate={{
-                  y: [0, -5, 0]
+                    y: [0, -5, 0],
                   }}
                   transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut"
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
                   }}
                   className="relative"
                 >
                   <motion.img
-                  src="/images/Court-Hero-2.png"
-                  alt="Modern Hallway"
-                  className="
+                    src="/images/Court-Hero-2.png"
+                    alt="Modern Hallway"
+                    className="
                     w-[120px] h-[180px]
                     sm:w-[100px] sm:h-[160px]
                     md:w-[120px] md:h-[200px]
                     lg:w-[180px] lg:h-[280px]
                     object-cover rounded-lg shadow-2xl transform rotate-2
                   "
-                  initial={{ scale: 1.05 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 1.2, delay: 0.5 }}
+                    initial={{ scale: 1.05 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 1.2, delay: 0.5 }}
                   />
                 </motion.div>
-                </motion.div>
+              </motion.div>
 
               {/* Image 2 - Top Right Horizontal (like 2 in your reference) */}
-                <motion.div
+              <motion.div
                 initial={{ x: 50, y: -30, opacity: 0, rotateY: 10 }}
                 animate={{ x: 0, y: 0, opacity: 1, rotateY: 0 }}
                 transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
@@ -381,43 +442,43 @@ export function HeroSection() {
                   md:top-[80px] md:left-[100px]
                   lg:top-[100px] lg:left-[120px]
                 "
-                whileHover={{ 
+                whileHover={{
                   scale: 1.02,
                   z: 50,
-                  transition: { duration: 0.3 }
+                  transition: { duration: 0.3 },
                 }}
-                >
+              >
                 <motion.div
-                  animate={{ 
-                  y: [0, -3, 0]
+                  animate={{
+                    y: [0, -3, 0],
                   }}
                   transition={{
-                  duration: 4.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1
+                    duration: 4.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1,
                   }}
                   className="relative"
                 >
                   <motion.img
-                  src="/images/Court-Hero-1.JPG"
-                  alt="Modern Office"
-                  className="
+                    src="/images/Court-Hero-1.JPG"
+                    alt="Modern Office"
+                    className="
                     w-[160px] h-[100px]
                     sm:w-[180px] sm:h-[120px]
                     md:w-[220px] md:h-[140px]
                     lg:w-[260px] lg:h-[160px]
                     object-cover rounded-lg shadow-2xl transform -rotate-1
                   "
-                  initial={{ scale: 1.05 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 1.2, delay: 0.7 }}
+                    initial={{ scale: 1.05 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 1.2, delay: 0.7 }}
                   />
                 </motion.div>
-                </motion.div>
+              </motion.div>
 
               {/* Image 4 - Small Bottom Left (like 4 in your reference) */}
-                <motion.div
+              <motion.div
                 initial={{ x: -30, y: 50, opacity: 0, rotateY: -8 }}
                 animate={{ x: 0, y: 0, opacity: 1, rotateY: 0 }}
                 transition={{ duration: 1, delay: 0.7, ease: "easeOut" }}
@@ -430,21 +491,21 @@ export function HeroSection() {
                   lg:bottom-[310px] lg:right-[120px]
                 "
                 style={{ pointerEvents: "auto" }}
-                whileHover={{ 
+                whileHover={{
                   scale: 1.05,
                   z: 50,
-                  transition: { duration: 0.3 }
+                  transition: { duration: 0.3 },
                 }}
-                >
+              >
                 <motion.div
-                  animate={{ 
-                  y: [0, 8, 0]
+                  animate={{
+                    y: [0, 8, 0],
                   }}
                   transition={{
-                  duration: 3.8,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1.5
+                    duration: 3.8,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1.5,
                   }}
                   className="relative"
                 >
@@ -457,7 +518,7 @@ export function HeroSection() {
                     transition={{ duration: 1.2, delay: 0.9 }}
                   />
                 </motion.div>
-                </motion.div>
+              </motion.div>
 
               {/* Image 3 - Bottom Right Medium (like 3 in your reference) */}
               <motion.div
@@ -471,21 +532,21 @@ export function HeroSection() {
                   md:bottom-[140px] md:right-[10px]
                   lg:bottom-[170px] lg:right-[-10px]
                 "
-                whileHover={{ 
+                whileHover={{
                   scale: 1.02,
                   z: 50,
-                  transition: { duration: 0.3 }
+                  transition: { duration: 0.3 },
                 }}
               >
                 <motion.div
-                  animate={{ 
-                    y: [0, 6, 0]
+                  animate={{
+                    y: [0, 6, 0],
                   }}
                   transition={{
                     duration: 4.2,
                     repeat: Infinity,
                     ease: "easeInOut",
-                    delay: 2
+                    delay: 2,
                   }}
                   className="relative"
                 >
@@ -522,17 +583,23 @@ export function HeroSection() {
                 fill="none"
                 strokeDasharray="3,3"
                 animate={{
-                  strokeDashoffset: [0, -15, 0]
+                  strokeDashoffset: [0, -15, 0],
                 }}
                 transition={{
                   duration: 8,
                   repeat: Infinity,
-                  ease: "linear"
+                  ease: "linear",
                 }}
               />
-              
+
               <defs>
-                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient
+                  id="gradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%"
+                >
                   <stop offset="0%" stopColor="#10b981" />
                   <stop offset="50%" stopColor="#06b6d4" />
                   <stop offset="100%" stopColor="#8b5cf6" />

@@ -129,7 +129,7 @@ export function AceternityNavbar() {
 
   if (!mounted) {
     return (
-      <nav className="fixed top-0 w-full z-[100] h-20 bg-white/80 dark:bg-background/80 backdrop-blur-md border-b border-gray-200/50 dark:border-border/50">
+      <nav className="fixed top-0 w-full sx:mb-20 sm:mb-30 z-[100] h-20 bg-white/80 dark:bg-background/80 backdrop-blur-md border-b border-gray-200/50 dark:border-border/50">
         <div className="container mx-auto">
           <div className="flex items-center justify-between h-20 px-4 sm:px-6 lg:px-8">
             <div className="flex-shrink-0">
