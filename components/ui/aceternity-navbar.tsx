@@ -312,7 +312,7 @@ export function AceternityNavbar() {
                    <Link href="/" className="flex items-center  pb-1 flex-col group">
               <div className="relative flex items-center">
                 <Image
-                  src="/images/logo-court-co.png"
+                  src="/images/court-logo.webp"
                   alt="Court Contracting Company"
                   width={140}
                   height={45}
