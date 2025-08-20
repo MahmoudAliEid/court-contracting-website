@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     siteName: "Court Contracting Company",
     images: [
       {
-        url: "/images/court-logo.png",
+        url: "/images/court-logo.webp",
         width: 1200,
         height: 630,
         alt: "Court Contracting Company Logo",
