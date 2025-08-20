@@ -49,7 +49,7 @@ export function Footer() {
   const socialLinks = [
     { icon: Facebook, href: "#", label: "Facebook" },
     { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Instagram, href: "#", label: "Instagram" },
+    { icon: Instagram, href: "https://www.instagram.com/court.co.a", label: "Instagram" },
     { icon: Linkedin, href: "#", label: "LinkedIn" },
   ];
 
@@ -170,7 +170,7 @@ export function Footer() {
           </div>
             <button
               className="text-gray-600 dark:text-muted-foreground text-sm hover:text-purple-600 transition-all duration-500"
-              onClick={() => window.open("https://wa.me/01158531550")}
+              onClick={() => window.open("https://shimaamohamed.bio.link/", "_blank")}
               type="button"
             >
               {t("footer.credit")}
