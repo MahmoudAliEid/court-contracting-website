@@ -304,91 +304,117 @@ export function HeroSection() {
 
           {/* Right: Modern 4-Image Overlapping Layout */}
           <div className="w-full lg:w-1/2 flex items-center justify-center relative order-1 lg:order-2 px-4 sm:px-6 lg:px-0">
-            {/* Background decorative elements */}
+            {/* Responsive Decorative Orbs */}
             <motion.div
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ duration: 1.2, delay: 0.2, ease: "backOut" }}
-              className="absolute -top-10 -left-10 w-32 h-32 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-full blur-xl"
+              className="absolute -top-10 -left-10 w-32 h-32 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-full blur-xl"
             />
             <motion.div
               initial={{ scale: 0, rotate: 180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ duration: 1.2, delay: 0.4, ease: "backOut" }}
-              className="absolute -bottom-10 -right-10 w-24 h-24 bg-gradient-to-br from-yellow-500/30 to-orange-500/30 rounded-full blur-xl"
+              className="absolute -bottom-10 -right-10 w-24 h-24 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-br from-yellow-500/30 to-orange-500/30 rounded-full blur-xl"
             />
 
             {/* Main Container for Overlapping Mood Board Layout */}
             <div className="relative w-full max-w-[600px] h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] xl:h-[800px]">
               
               {/* Image 1 - Large Left Vertical (like A in your reference) */}
-              <motion.div
+                <motion.div
                 initial={{ x: -50, opacity: 0, rotateY: -10 }}
                 animate={{ x: 0, opacity: 1, rotateY: 0 }}
                 transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-                className="absolute top-0 right-10 z-30 transform rotate-2"
-                whileHover={{ 
+                // Responsive position and size
+                className="
+                  absolute 
+                  top-0 right-10 z-30 transform rotate-2
+                  sm:top-2 sm:right-4
+                  md:top-4 md:right-8
+                  lg:top-0 lg:right-10
+                "
+                whileHover={{
                   scale: 1.02,
                   z: 50,
                   transition: { duration: 0.3 }
                 }}
-              >
+                >
                 <motion.div
-                  animate={{ 
-                    y: [0, -5, 0]
+                  animate={{
+                  y: [0, -5, 0]
                   }}
                   transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut"
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut"
                   }}
                   className="relative"
                 >
                   <motion.img
-                    src="/images/Court-Hero-2.png"
-                    alt="Modern Hallway"
-                    className="w-[120px] h-[180px] sm:w-[140px] sm:h-[200px] md:w-[160px] md:h-[240px] lg:w-[180px] lg:h-[280px] object-cover rounded-lg shadow-2xl transform rotate-2"
-                    initial={{ scale: 1.05 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 1.2, delay: 0.5 }}
+                  src="/images/Court-Hero-2.png"
+                  alt="Modern Hallway"
+                  className="
+                    w-[120px] h-[180px]
+                    sm:w-[100px] sm:h-[160px]
+                    md:w-[120px] md:h-[200px]
+                    lg:w-[180px] lg:h-[280px]
+                    object-cover rounded-lg shadow-2xl transform rotate-2
+                  "
+                  initial={{ scale: 1.05 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 1.2, delay: 0.5 }}
                   />
                 </motion.div>
-              </motion.div>
+                </motion.div>
 
               {/* Image 2 - Top Right Horizontal (like 2 in your reference) */}
-              <motion.div
+                <motion.div
                 initial={{ x: 50, y: -30, opacity: 0, rotateY: 10 }}
                 animate={{ x: 0, y: 0, opacity: 1, rotateY: 0 }}
                 transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
-                className="absolute top-[40px] sm:top-[60px] md:top-[80px] left-[60px] sm:left-[80px] md:left-[100px] z-20"
+                // Responsive position and size
+                className="
+                  absolute 
+                  top-[40px] left-[60px] z-20
+                  sm:top-[60px] sm:left-[80px]
+                  md:top-[80px] md:left-[100px]
+                  lg:top-[100px] lg:left-[120px]
+                "
                 whileHover={{ 
                   scale: 1.02,
                   z: 50,
                   transition: { duration: 0.3 }
                 }}
-              >
+                >
                 <motion.div
                   animate={{ 
-                    y: [0, -3, 0]
+                  y: [0, -3, 0]
                   }}
                   transition={{
-                    duration: 4.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 1
+                  duration: 4.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 1
                   }}
                   className="relative"
                 >
                   <motion.img
-                    src="/images/Court-Hero-1.JPG"
-                    alt="Modern Office"
-                    className="w-[160px] h-[100px] sm:w-[180px] sm:h-[120px] md:w-[220px] md:h-[140px] lg:w-[260px] lg:h-[160px] object-cover rounded-lg shadow-2xl transform -rotate-1"
-                    initial={{ scale: 1.05 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 1.2, delay: 0.7 }}
+                  src="/images/Court-Hero-1.JPG"
+                  alt="Modern Office"
+                  className="
+                    w-[160px] h-[100px]
+                    sm:w-[180px] sm:h-[120px]
+                    md:w-[220px] md:h-[140px]
+                    lg:w-[260px] lg:h-[160px]
+                    object-cover rounded-lg shadow-2xl transform -rotate-1
+                  "
+                  initial={{ scale: 1.05 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 1.2, delay: 0.7 }}
                   />
                 </motion.div>
-              </motion.div>
+                </motion.div>
 
               {/* Image 4 - Small Bottom Left (like 4 in your reference) */}
                 <motion.div
@@ -396,7 +422,13 @@ export function HeroSection() {
                 animate={{ x: 0, y: 0, opacity: 1, rotateY: 0 }}
                 transition={{ duration: 1, delay: 0.7, ease: "easeOut" }}
                 // Make it bigger and overlap image 2
-                className="absolute bottom-[310px] right-[120px]  z-30 transform -rotate-3 "
+                className="
+                  absolute 
+                  bottom-[310px] right-[120px] z-30 transform -rotate-3
+                  sm:bottom-[220px] sm:right-[80px]
+                  md:bottom-[260px] md:right-[100px]
+                  lg:bottom-[310px] lg:right-[120px]
+                "
                 style={{ pointerEvents: "auto" }}
                 whileHover={{ 
                   scale: 1.05,
@@ -432,7 +464,13 @@ export function HeroSection() {
                 initial={{ x: 30, y: 50, opacity: 0, rotateY: 8 }}
                 animate={{ x: 0, y: 0, opacity: 1, rotateY: 0 }}
                 transition={{ duration: 1, delay: 0.9, ease: "easeOut" }}
-                className="absolute bottom-[170px] right-[-10px] z-15 transform rotate-3"
+                className="
+                  absolute 
+                  bottom-[170px] right-[-10px] z-15 transform rotate-3
+                  sm:bottom-[120px] sm:right-[0px]
+                  md:bottom-[140px] md:right-[10px]
+                  lg:bottom-[170px] lg:right-[-10px]
+                "
                 whileHover={{ 
                   scale: 1.02,
                   z: 50,
@@ -454,7 +492,13 @@ export function HeroSection() {
                   <motion.img
                     src="/images/Court-Hero-4.png"
                     alt="Luxury Bathroom"
-                    className="w-[140px] h-[120px] sm:w-[160px] sm:h-[140px] md:w-[180px] md:h-[160px] lg:w-[200px] lg:h-[180px] object-cover rounded-lg shadow-2xl transform -rotate-2"
+                    className="
+                      w-[140px] h-[120px]
+                      sm:w-[120px] sm:h-[100px]
+                      md:w-[160px] md:h-[120px]
+                      lg:w-[200px] lg:h-[180px]
+                      object-cover rounded-lg shadow-2xl transform -rotate-2
+                    "
                     initial={{ scale: 1.05 }}
                     animate={{ scale: 1 }}
                     transition={{ duration: 1.2, delay: 1.1 }}
