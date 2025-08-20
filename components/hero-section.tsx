@@ -452,7 +452,7 @@ export function HeroSection() {
                   className="relative"
                 >
                   <motion.img
-                    src="/images/court-Hero-4.png"
+                    src="/images/Court-Hero-4.png"
                     alt="Luxury Bathroom"
                     className="w-[140px] h-[120px] sm:w-[160px] sm:h-[140px] md:w-[180px] md:h-[160px] lg:w-[200px] lg:h-[180px] object-cover rounded-lg shadow-2xl transform -rotate-2"
                     initial={{ scale: 1.05 }}
