@@ -203,18 +203,13 @@ export function HeroSection() {
                 }`}
               >
                 <motion.div
-                  initial={{ x: language === "ar" ? 100 : -100, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 1.25 }}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  style={{ direction: language === "ar" ? "rtl" : "ltr" }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <Button
                     size="lg"
-                    onClick={() => {
-                      router.push('/ourservices')
-                    }}
+                    onClick={scrollToContact}
                     className={`group bg-gradient-to-r my-2 sm:my-4 w-full sm:w-auto from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 rounded-2xl border-0 relative overflow-hidden ${
                       language === "ar" ? "sm:ml-4" : "sm:mr-4"
                     }`}
@@ -222,46 +217,39 @@ export function HeroSection() {
                     {/* Button glow effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-xl" />
                     <span className="relative z-10">
-                      {language === "ar" ? "خدماتنا" : "Our Services"}
+                      {language === "ar" ? "ابدأ مشروعك" : "Start Your Project"}
                     </span>
-                      <ArrowRight
+                    <ArrowRight
                       className={`${
-                        language === "ar" ? "ml-2 rotate-180" : "mr-2"
+                        language === "ar" ? "mr-2" : "ml-2"
                       } h-5 w-5 transition-transform group-hover:${
-                        language === "ar" ? "translate-x-1" : "-translate-x-1"
+                        language === "ar" ? "-translate-x-1" : "translate-x-1"
                       } relative z-10`}
                     />
-                  
                   </Button>
                 </motion.div>
 
                 <motion.div
-                  initial={{ x: language === "ar" ? 100 : -100, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 1.3 }}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  style={{ direction: language === "ar" ? "rtl" : "ltr" }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <Button
                     variant="outline"
                     size="lg"
-                    onClick={() => router.push("/about")}
+                    onClick={
+                      () => router.push("/ourprojects")
+                    }
                     className={`group border-2 border-white/30 my-2 sm:my-4 w-full sm:w-auto text-white hover:bg-white/10 hover:border-white/50 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg transition-all duration-300 bg-transparent backdrop-blur-sm rounded-2xl relative overflow-hidden ${
                       language === "ar" ? "flex-row-reverse" : ""
                     }`}
                   >
                     <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    
-                      <ArrowRight
-                      className={`${
-                        language === "ar" ? "ml-2 rotate-180" : "mr-2"
-                      } h-5 w-5 transition-transform group-hover:${
-                        language === "ar" ? "translate-x-1" : "-translate-x-1"
-                      } relative z-10`}
+                    <Play
+                      className={`${language === "ar" ? "ml-2" : "mr-2"} h-5 w-5 relative z-10`}
                     />
                     <span className="relative z-10">
-                      {language === "ar" ? "معلومات عنا" : "About Us"}
+                      {language === "ar" ? "شاهد أعمالنا" : "View Our Work"}
                     </span>
                   </Button>
                 </motion.div>
@@ -318,121 +306,220 @@ export function HeroSection() {
               className="absolute -bottom-10 -right-10 w-24 h-24 bg-gradient-to-br from-yellow-500/30 to-orange-500/30 rounded-full blur-xl"
             />
 
-            {/* Main Container for Overlapping Mood Board Layout */}
-            <div className="relative w-full max-w-[600px] h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] xl:h-[800px]">
+            {/* Moodboard Collage Container */}
+            <div className="relative w-full max-w-[700px] h-[400px] sm:h-[500px] md:h-[600px] lg:h-[650px] xl:h-[700px]">
               
-              {/* Image 1 - Large Left Vertical (like A in your reference) */}
+              {/* Main Background Image - Largest (Living Room) */}
               <motion.div
-                initial={{ x: -50, opacity: 0, rotateY: -10 }}
-                animate={{ x: 0, opacity: 1, rotateY: 0 }}
-                transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-                className="absolute top-0 right-10 z-30 transform rotate-2"
-                whileHover={{ 
-                  scale: 1.02,
-                  z: 50,
-                  transition: { duration: 0.3 }
-                }}
-              >
-                <motion.div
-                  animate={{ 
-                    y: [0, -5, 0]
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                  className="relative"
-                >
-                  <motion.img
-                    src="/images/Court-Hero-2.png"
-                    alt="Modern Hallway"
-                    className="w-[120px] h-[180px] sm:w-[140px] sm:h-[200px] md:w-[160px] md:h-[240px] lg:w-[180px] lg:h-[280px] object-cover rounded-lg shadow-2xl transform rotate-2"
-                    initial={{ scale: 1.05 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 1.2, delay: 0.5 }}
-                  />
-                </motion.div>
-              </motion.div>
-
-              {/* Image 2 - Top Right Horizontal (like 2 in your reference) */}
-              <motion.div
-                initial={{ x: 50, y: -30, opacity: 0, rotateY: 10 }}
-                animate={{ x: 0, y: 0, opacity: 1, rotateY: 0 }}
-                transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
-                className="absolute top-[40px] sm:top-[60px] md:top-[80px] left-[60px] sm:left-[80px] md:left-[100px] z-20"
-                whileHover={{ 
-                  scale: 1.02,
-                  z: 50,
-                  transition: { duration: 0.3 }
-                }}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 1.2, delay: 0.2, ease: "easeOut" }}
+                className="absolute inset-0 z-10"
               >
                 <motion.div
                   animate={{ 
                     y: [0, -3, 0]
                   }}
                   transition={{
-                    duration: 4.5,
+                    duration: 6,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="relative w-full h-full"
+                >
+                  <div className="bg-white p-4 rounded-2xl shadow-2xl overflow-hidden transform -rotate-1 w-full h-full">
+                    <motion.img
+                      src="/images/Court-Hero-1.JPG"
+                      alt="Luxury Living Room"
+                      className="w-full h-full object-cover rounded-xl"
+                      initial={{ scale: 1.05 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 1.2, delay: 0.4 }}
+                      whileHover={{
+                        scale: 1.02,
+                        transition: { duration: 0.3 }
+                      }}
+                    />
+                  </div>
+                </motion.div>
+              </motion.div>
+
+              {/* Overlapping Image 1 - Top Right (Modern Hallway) */}
+              <motion.div
+                initial={{ x: 50, y: -30, opacity: 0, rotateY: 15 }}
+                animate={{ x: 0, y: 0, opacity: 1, rotateY: 0 }}
+                transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
+                className="absolute top-[10%] right-[5%] z-20"
+                whileHover={{ 
+                  scale: 1.05,
+                  z: 50,
+                  transition: { duration: 0.3 }
+                }}
+              >
+                <motion.div
+                  animate={{ 
+                    y: [0, -4, 0],
+                    rotate: [2, 4, 2]
+                  }}
+                  transition={{
+                    duration: 5,
                     repeat: Infinity,
                     ease: "easeInOut",
                     delay: 1
                   }}
                   className="relative"
                 >
-                  <motion.img
-                    src="/images/Court-Hero-1.JPG"
-                    alt="Modern Office"
-                    className="w-[160px] h-[100px] sm:w-[180px] sm:h-[120px] md:w-[220px] md:h-[140px] lg:w-[260px] lg:h-[160px] object-cover rounded-lg shadow-2xl transform -rotate-1"
-                    initial={{ scale: 1.05 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 1.2, delay: 0.7 }}
-                  />
+                  <div className="bg-white p-3 rounded-xl shadow-2xl overflow-hidden transform rotate-2">
+                    <motion.img
+                      src="/images/Court-Hero-2.png"
+                      alt="Modern Hallway"
+                      className="w-[140px] h-[100px] sm:w-[180px] sm:h-[130px] md:w-[220px] md:h-[160px] lg:w-[250px] lg:h-[180px] object-cover rounded-lg"
+                      initial={{ scale: 1.05 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 1.2, delay: 0.7 }}
+                    />
+                  </div>
                 </motion.div>
               </motion.div>
 
-              {/* Image 4 - Small Bottom Left (like 4 in your reference) */}
-                <motion.div
-                initial={{ x: -30, y: 50, opacity: 0, rotateY: -8 }}
+              {/* Overlapping Image 2 - Middle Right (Elegant Dining) */}
+              <motion.div
+                initial={{ x: 40, y: 20, opacity: 0, rotateY: -10 }}
                 animate={{ x: 0, y: 0, opacity: 1, rotateY: 0 }}
                 transition={{ duration: 1, delay: 0.7, ease: "easeOut" }}
-                // Make it bigger and overlap image 2
-                className="absolute bottom-[310px] right-[120px]  z-30 transform -rotate-3 "
-                style={{ pointerEvents: "auto" }}
+                className="absolute top-[45%] right-[8%] z-25"
                 whileHover={{ 
                   scale: 1.05,
                   z: 50,
                   transition: { duration: 0.3 }
                 }}
-                >
+              >
                 <motion.div
                   animate={{ 
-                  y: [0, 8, 0]
+                    y: [0, 3, 0],
+                    rotate: [-2, 0, -2]
                   }}
                   transition={{
-                  duration: 3.8,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1.5
+                    duration: 4.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1.5
                   }}
                   className="relative"
                 >
-                  <motion.img
-                    src="/images/Court-Hero-3.png"
-                    alt="Elegant Dining"
-                    className="w-[140px] h-[140px] sm:w-[180px] sm:h-[180px] md:w-[220px] md:h-[220px] lg:w-[240px] lg:h-[240px] object-cover rounded-lg shadow-2xl transform rotate-3"
-                    initial={{ scale: 1.05 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 1.2, delay: 0.9 }}
-                  />
+                  <div className="bg-white p-3 rounded-xl shadow-2xl overflow-hidden transform -rotate-2">
+                    <motion.img
+                      src="/images/Court-Hero-3.png"
+                      alt="Elegant Dining"
+                      className="w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] md:w-[180px] md:h-[180px] lg:w-[200px] lg:h-[200px] object-cover rounded-lg"
+                      initial={{ scale: 1.05 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 1.2, delay: 0.9 }}
+                    />
+                  </div>
                 </motion.div>
+              </motion.div>
+
+              {/* Overlapping Image 3 - Bottom Center (Luxury Bathroom) */}
+              <motion.div
+                initial={{ x: 20, y: 50, opacity: 0, rotateY: 5 }}
+                animate={{ x: 0, y: 0, opacity: 1, rotateY: 0 }}
+                transition={{ duration: 1, delay: 0.9, ease: "easeOut" }}
+                className="absolute bottom-[8%] left-[50%] transform -translate-x-1/2 z-30"
+                whileHover={{ 
+                  scale: 1.05,
+                  z: 50,
+                  transition: { duration: 0.3 }
+                }}
+              >
+                <motion.div
+                  animate={{ 
+                    y: [0, -2, 0],
+                    rotate: [1, -1, 1]
+                  }}
+                  transition={{
+                    duration: 5.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 2
+                  }}
+                  className="relative"
+                >
+                  <div className="bg-white p-3 rounded-xl shadow-2xl overflow-hidden transform rotate-1">
+                    <motion.img
+                      src="/images/court-Hero-4.png"
+                      alt="Luxury Bathroom"
+                      className="w-[160px] h-[110px] sm:w-[200px] sm:h-[140px] md:w-[240px] md:h-[170px] lg:w-[280px] lg:h-[190px] object-cover rounded-lg"
+                      initial={{ scale: 1.05 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 1.2, delay: 1.1 }}
+                    />
+                  </div>
                 </motion.div>
+              </motion.div>
+
+              {/* Mobile-specific adjustments using CSS Grid fallback */}
+              <div className="md:hidden absolute inset-0 z-0">
+                <div className="grid grid-cols-2 gap-4 p-4 h-full opacity-0">
+                  {/* Hidden grid for mobile layout reference */}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Floating Animation Pattern */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 1.5, ease: "easeOut" }}
+            className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
+          >
+            <motion.svg
+              width="200"
+              height="20"
+              viewBox="0 0 200 20"
+              className="opacity-30"
+              animate={{
+                pathLength: [0, 1, 0],
+                opacity: [0.2, 0.6, 0.2],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              <motion.path
+                d="M10,10 Q50,2 100,10 T190,10"
+                fill="none"
+                stroke="url(#gradient)"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+                    ease: "easeInOut",
+                    delay: 1.5
+                  }}
+                  className="relative"
+                >
+                  <div className="bg-white p-2 rounded-xl shadow-2xl overflow-hidden transform rotate-3">
+                    <motion.img
+                      src="/images/Court-Hero-3.png"
+                      alt="Elegant Dining"
+                      className="w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] md:w-[120px] md:h-[120px] lg:w-[140px] lg:h-[140px] object-cover rounded-lg"
+                      initial={{ scale: 1.05 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 1.2, delay: 0.9 }}
+                    />
+                  </div>
+                </motion.div>
+              </motion.div>
 
               {/* Image 3 - Bottom Right Medium (like 3 in your reference) */}
               <motion.div
                 initial={{ x: 30, y: 50, opacity: 0, rotateY: 8 }}
                 animate={{ x: 0, y: 0, opacity: 1, rotateY: 0 }}
                 transition={{ duration: 1, delay: 0.9, ease: "easeOut" }}
-                className="absolute bottom-[170px] right-[-10px] z-15 transform rotate-3"
+                className="absolute bottom-0 right-0 z-15"
                 whileHover={{ 
                   scale: 1.02,
                   z: 50,
@@ -451,14 +538,16 @@ export function HeroSection() {
                   }}
                   className="relative"
                 >
-                  <motion.img
-                    src="/images/court-Hero-4.png"
-                    alt="Luxury Bathroom"
-                    className="w-[140px] h-[120px] sm:w-[160px] sm:h-[140px] md:w-[180px] md:h-[160px] lg:w-[200px] lg:h-[180px] object-cover rounded-lg shadow-2xl transform -rotate-2"
-                    initial={{ scale: 1.05 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 1.2, delay: 1.1 }}
-                  />
+                  <div className="bg-white p-3 rounded-xl shadow-2xl overflow-hidden transform -rotate-2">
+                    <motion.img
+                      src="/images/court-Hero-4.png"
+                      alt="Luxury Bathroom"
+                      className="w-[140px] h-[120px] sm:w-[160px] sm:h-[140px] md:w-[180px] md:h-[160px] lg:w-[200px] lg:h-[180px] object-cover rounded-lg"
+                      initial={{ scale: 1.05 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 1.2, delay: 1.1 }}
+                    />
+                  </div>
                 </motion.div>
               </motion.div>
             </div>

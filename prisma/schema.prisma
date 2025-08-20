@@ -30,6 +30,7 @@ model Product {
   description      String?
   ar_description   String?
   images            String[]
+  videos            String[]
   category         String
   ar_category      String? 
   status           String

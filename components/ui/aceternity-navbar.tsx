@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Moon, Sun, Globe, ChevronDown, LogIn, ArrowRight, Sparkles } from "lucide-react"
+import { Menu, Moon, Sun, Globe, ChevronDown, LogIn, ArrowRight, Sparkles, Home, Info, Wrench, Briefcase, Phone } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useLanguage } from "@/components/language-provider"
 import { motion, AnimatePresence } from "framer-motion"
@@ -38,6 +38,29 @@ export function AceternityNavbar() {
       contactSection.scrollIntoView({ behavior: "smooth" })
     }
   }
+
+  // Function to get navigation icons
+  const getNavIcon = (itemName: string) => {
+    const iconClass = "w-4 h-4";
+    const lowerName = itemName.toLowerCase();
+    
+    if (lowerName.includes("home") || lowerName.includes("الرئيسية")) {
+      return <Home className={iconClass} />;
+    }
+    if (lowerName.includes("about") || lowerName.includes("من نحن")) {
+      return <Info className={iconClass} />;
+    }
+    if (lowerName.includes("services") || lowerName.includes("خدمات")) {
+      return <Wrench className={iconClass} />;
+    }
+    if (lowerName.includes("projects") || lowerName.includes("أعمالنا")) {
+      return <Briefcase className={iconClass} />;
+    }
+    if (lowerName.includes("contact") || lowerName.includes("تواصل")) {
+      return <Phone className={iconClass} />;
+    }
+    return null;
+  };
   const token = getCookie('authToken') ;
   console.log("authToken from cookies:", token);
 
@@ -135,21 +158,22 @@ export function AceternityNavbar() {
       style={{ zIndex: 100 }}
     >
       <div className="container mx-auto">
-        <div className="flex items-center justify-between h-20 px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20 ">
           {/* Logo - Made Bigger */}
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex-shrink-0 relative">
-            <Link href="/" className="flex items-center group">
-              <div className="relative">
+            <Link href="/" className="flex items-center  pb-1 flex-col group">
+              <div className="relative flex items-center">
                 <Image
-                  src="/images/IMG_3098.png"
+                  src="/images/court-logo.webp"
                   alt="Court Contracting Company"
-                  width={200}
-                  height={65}
-                  className="h-14 w-auto transition-all duration-300 group-hover:brightness-110 rounded-md"
+                  width={140}
+                  height={45}
+                  className="h-14 w-auto sm:h-16 md:h-20 transition-all duration-300 group-hover:brightness-110 rounded-md"
                   priority
                 />
                 <div className="absolute -inset-2 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-pink-500/0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
               </div>
+             
             </Link>
           </motion.div>
 
@@ -159,8 +183,6 @@ export function AceternityNavbar() {
               <div
                 key={item.name}
                 className="relative"
-                onMouseEnter={() => item.dropdown && setActiveDropdown(item.name)}
-                onMouseLeave={() => setActiveDropdown(null)}
               >
                 <motion.div
                   initial={{ y: -20, opacity: 0 }}
@@ -181,71 +203,14 @@ export function AceternityNavbar() {
                       ${language === "ar" ? "flex-row-reverse" : ""}
                     `}
                   >
+                    {/* Navigation Icon */}
+                    <span className={`${language === "ar" ? "ml-2" : "mr-2"} flex-shrink-0`}>
+                      {getNavIcon(item.name)}
+                    </span>
                     <span className="relative z-10">{item.name}</span>
-                    {item.dropdown && (
-                      <ChevronDown
-                        className={`${language === "ar" ? "mr-1.5" : "ml-1.5"} h-3.5 w-3.5  transition-transform  duration-300 group-hover:rotate-180`}
-                      />
-                    )}
                     <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-pink-500/0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </Link>
                 </motion.div>
-
-                {/* Enhanced Dropdown Menu */}
-                <AnimatePresence>
-                  {item.dropdown && activeDropdown === item.name && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 15, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                      transition={{ duration: 0.2, ease: "easeOut" }}
-                      className={`absolute top-full ${language === "ar" ? "right-0" : "left-0"} mt-2 w-80 bg-white/85 dark:bg-background/85 backdrop-blur-xl border border-gray-200/80 dark:border-border/80 rounded-2xl shadow-2xl overflow-hidden z-[200]`}
-                      style={{ zIndex: 200 }}
-                    >
-                      <div className="p-2">
-                        {item.dropdown.map((dropdownItem, dropIndex) => (
-                          <motion.div
-                            key={dropIndex}
-                            initial={{ opacity: 0, x: language === "ar" ? 10 : -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: dropIndex * 0.05, duration: 0.3 }}
-                          >
-                            <Link
-                              href={dropdownItem.href}
-                              className={`group flex flex-col px-4 py-3 rounded-xl hover:bg-gray-50/80 dark:hover:bg-gray-800/50 transition-all duration-300 border border-transparent hover:border-gray-200/50 dark:hover:border-gray-700/50 ${language === "ar" ? "text-right" : "text-left"}`}
-                            >
-                              <div
-                                className={`flex items-center justify-between ${language === "ar" ? "flex-row-reverse" : ""}`}
-                              >
-                                <span className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-300">
-                                  {dropdownItem.name}
-                                </span>
-                                <ArrowRight
-                                  className={`h-4 w-4 text-gray-400 group-hover:text-purple-500 transform ${language === "ar" ? "group-hover:-translate-x-1" : "group-hover:translate-x-1"} transition-all duration-300`}
-                                />
-                              </div>
-                              {dropdownItem.description && (
-                                <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">
-                                  {dropdownItem.description}
-                                </span>
-                              )}
-                            </Link>
-                          </motion.div>
-                        ))}
-                        <div className="mt-2 pt-2 border-t border-gray-200/50 dark:border-gray-700/50">
-                          <Button
-                            size="sm"
-                            onClick={scrollToContact}
-                            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
-                          >
-                            <Sparkles className={`${language === "ar" ? "ml-2" : "mr-2"} w-3.5 h-3.5`} />
-                            {language === "ar" ? "تواصل معنا" : "Contact Us"}
-                          </Button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
             ))}
           </div>
@@ -303,16 +268,22 @@ export function AceternityNavbar() {
               )}
             </motion.div>
         
-            {/* CTA Button - Changed to Contact Us */}
+            {/* WhatsApp Button - Replaced Contact Us */}
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="hidden sm:block">
-              <Button
-                size="sm"
-                onClick={scrollToContact}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-5 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 font-medium"
+              <motion.a
+                href="https://wa.me/966566397317?text=أريد التواصل معكم وطلب خدمة من شركة كورت +966 56 639 7317"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 font-medium flex items-center ${language === "ar" ? "space-x-reverse space-x-2" : "space-x-2"}`}
               >
-                <ArrowRight className={`${language === "ar" ? "ml-2" : "mr-2"} w-3.5 h-3.5`} />
-                {language === "ar" ? "تواصل معنا" : "Contact Us"}
-              </Button>
+                <svg className="w-4 h-4  text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.465 3.516"/>
+                </svg>
+               
+                <span className="px-1">{language === "ar" ? "واتساب" : "WhatsApp"}</span>
+              </motion.a>
             </motion.div>
 
             {/* Mobile Menu */}
@@ -337,21 +308,30 @@ export function AceternityNavbar() {
               >
                 <div className="flex flex-col space-y-6 mt-8">
                   {/* Mobile Logo - Made Bigger */}
-                  <div className="pb-6 border-b border-gray-200/50 dark:border-gray-700/50">
-                    <Image
-                      src="/images/court-logo.png"
-                      alt="Court Contracting Company"
-                      width={180}
-                      height={60}
-                      className="h-14 w-auto"
-                    />
+                  <div className="pb-6 border-b border-gray-200/50 dark:border-gray-700/50 flex items-center justify-between">
+                   <Link href="/" className="flex items-center  pb-1 flex-col group">
+              <div className="relative flex items-center">
+                <Image
+                  src="/images/logo-court-co.png"
+                  alt="Court Contracting Company"
+                  width={140}
+                  height={45}
+                  className="h-10 w-auto sm:h-12 md:h-14 transition-all duration-300 group-hover:brightness-110 rounded-md"
+                  priority
+                />
+                <div className="absolute -inset-2 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-pink-500/0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
+              </div>
+              
+            </Link>
+                    
+                  
                   </div>
 
                   {/* Mobile Controls */}
                   <div
                     className={`flex items-center justify-between pb-4 border-b border-gray-200/50 dark:border-gray-700/50 ${language === "ar" ? "flex-row-reverse" : ""}`}
                   >
-                    <div className={`flex items-center ${language === "ar" ? "space-x-reverse" : "space-x-3"}`}>
+                    <div className={`flex items-center ${language === "ar" ? "space-x-reverse space-x-3" : "space-x-3"}`}>
                       <Button variant="ghost" size="icon" onClick={toggleTheme} className="w-10 h-10 rounded-xl">
                         <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                         <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -364,6 +344,8 @@ export function AceternityNavbar() {
                       >
                         <Globe className="h-4 w-4" />
                       </Button>
+                      
+                   
                          {/* Login/Dashboard Button */}
            
               {token ? (
@@ -431,24 +413,15 @@ export function AceternityNavbar() {
                         href={item.href}
                         className={`flex items-center justify-between text-lg font-medium text-gray-800 hover:text-purple-600 dark:text-gray-200 dark:hover:text-purple-400 transition-colors duration-300 py-3 px-2 rounded-xl hover:bg-gray-50/80 dark:hover:bg-gray-800/50 ${language === "ar" ? "flex-row-reverse" : ""}`}
                       >
-                        <span>{item.name}</span>
-                        <ArrowRight className={`${language === "ar" ? "ml-2" : "mr-2"} h-4 w-4 opacity-50`} />
-                      </Link>
-                      {item.dropdown && (
-                        <div
-                          className={`${language === "ar" ? "mr-4" : "ml-4"} mt-2 space-y-2 pb-4 border-b border-gray-200/30 dark:border-gray-700/30`}
-                        >
-                          {item.dropdown.map((dropdownItem, dropIndex) => (
-                            <Link
-                              key={dropIndex}
-                              href={dropdownItem.href}
-                              className="block text-sm text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-gray-50/50 dark:hover:bg-gray-800/30"
-                            >
-                              {dropdownItem.name}
-                            </Link>
-                          ))}
+                        <div className={`flex items-center ${language === "ar" ? "flex-row-reverse" : ""}`}>
+                          {/* Mobile Navigation Icon */}
+                          <span className={`${language === "ar" ? "ml-3" : "mr-3"} flex-shrink-0`}>
+                            {getNavIcon(item.name)}
+                          </span>
+                          <span>{item.name}</span>
                         </div>
-                      )}
+                        <ArrowRight className={`${language === "ar" ? "ml-2 rotate-180" : "mr-2"} h-4 w-4 opacity-50`} />
+                      </Link>
                     </motion.div>
                   ))}
 
@@ -470,21 +443,27 @@ export function AceternityNavbar() {
                     </Button>
                   </motion.div>
 
-                  {/* Mobile CTA - Changed to Contact Us */}
+                  {/* Mobile WhatsApp Button - Replaced Contact Us */}
                   <motion.div
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.5, duration: 0.4 }}
-                    className="pt-2"
+                    className="pt-2 space-y-3"
                   >
-                    <Button
-                      size="lg"
-                      onClick={scrollToContact}
-                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl"
+                    {/* WhatsApp Contact Button - Mobile Menu */}
+                    <motion.a
+                      href="https://wa.me/966566397317?text=أريد التواصل معكم وطلب خدمة من شركة كورت +966 56 639 7317"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={`w-full bg-green-500 hover:bg-green-600 text-white font-medium rounded-xl py-3 px-4 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center ${language === "ar" ? "space-x-reverse space-x-2" : "space-x-2"}`}
                     >
-                      <ArrowRight className={`${language === "ar" ? "ml-2" : "mr-2"} h-4 w-4`} />
-                      {language === "ar" ? "تواصل معنا" : "Contact Us"}
-                    </Button>
+                      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.465 3.516"/>
+                      </svg>
+                      <span>{language === "ar" ? "واتساب" : "WhatsApp"}</span>
+                    </motion.a>
                   </motion.div>
                 </div>
               </SheetContent>

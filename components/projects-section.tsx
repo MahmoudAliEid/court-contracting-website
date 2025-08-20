@@ -265,15 +265,7 @@ export function ProjectsSection() {
                         />
                       </CardItem>
                       <div className="flex justify-between items-center gap-2 mt-auto">
-                        <CardItem
-                          translateZ={20}
-                          as="button"
-                          onClick={() => handleViewProject(project)}
-                          className="px-4 py-2 rounded-xl text-xs font-normal text-gray-600 dark:text-muted-foreground border border-gray-300 dark:border-border hover:bg-gray-50 dark:hover:bg-accent/50 transition-colors flex items-center gap-1"
-                        >
-                          <Eye className="h-3 w-3" />
-                          {language === "ar" ? "عرض التفاصيل" : "View Details"}
-                        </CardItem>
+                       
                         <CardItem
                           translateZ={20}
                           as="button"
@@ -290,23 +282,7 @@ export function ProjectsSection() {
               ))}
             </div>
 
-            {/* View All Button */}
-            <motion.div
-              initial={{ y: 30, opacity: 0 }}
-              animate={isInView ? { y: 0, opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.8 }}
-              className="text-center px-4"
-            >
-              <Button
-                size="lg"
-                className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                {t("projects.view-all")}
-                <ArrowRight
-                  className={`${language === "ar" ? "mr-2" : "ml-2"} h-4 w-4 transition-transform group-hover:${language === "ar" ? "-translate-x-1" : "translate-x-1"}`}
-                />
-              </Button>
-            </motion.div>
+         
           </div>
         </div>
       </section>

@@ -2,6 +2,7 @@ import { prisma } from "@/prisma/client";
 import { NextResponse } from "next/server";
 import { authenticateUser } from "@/lib/auth";
 import upload from "@/lib/upload";
+import uploadingVideos from "@/lib/videosUpload";
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
@@ -55,6 +56,23 @@ if (!token) {
     );
     const uploadedImages = await upload({ images: imageBuffers });
     updateFields.images = uploadedImages.map((image: any) => image.secure_url);
+  }
+
+  // Videos: collect all video files
+  const videos: File[] = [];
+  for (const [key, value] of formData.entries()) {
+    if (key.startsWith("videos")) {
+      if (value instanceof File && value.size > 0) {
+        videos.push(value);
+      }
+    }
+  }
+  if (videos.length > 0) {
+    const videoBuffers = await Promise.all(
+      videos.map(async (file) => Buffer.from(await file.arrayBuffer()))
+    );
+    const uploadedVideos = await uploadingVideos({ videos: videoBuffers });
+    updateFields.videos = uploadedVideos.map((video: any) => video.secure_url);
   }
 
   try {

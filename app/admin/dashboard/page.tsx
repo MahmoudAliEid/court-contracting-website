@@ -38,6 +38,7 @@ interface Project {
   status: "active" | "completed" | "draft"
   createdAt: string
   images: string[]
+  videos?: string[]
 }
 
 export default function AdminDashboard() {
@@ -56,6 +57,7 @@ export default function AdminDashboard() {
     images: [] as string[],
     status: "",
     ar_status: "",
+  videos: [] as string[],
   })
   const router = useRouter()
 
@@ -70,6 +72,7 @@ export default function AdminDashboard() {
     status: "",
     ar_status: "",
     images: [],
+    videos: [],
   });
   setId(null);
   setIsAddDialogOpen(false);
@@ -133,8 +136,8 @@ export default function AdminDashboard() {
   const lastMonthprojects = projects?.filter((product: any) => new Date(product.createdAt) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length || 0
 
   const { mutate: createProject, isLoading: isCreatingProject } = useMutation(
-    async (product: { title: string; category: string; ar_title: string; description: string; ar_description: string; ar_category: string; ar_status: string; images: string[]; status: string }) => {
-      const { title, category, ar_title, ar_description, ar_category, ar_status, description, images, status } = product;
+    async (product: { title: string; category: string; ar_title: string; description: string; ar_description: string; ar_category: string; ar_status: string; images: string[]; status: string; videos: string[] }) => {
+      const { title, category, ar_title, ar_description, ar_category, ar_status, description, images, status, videos } = product;
       const formData = new FormData();
       formData.append('title', title);
       formData.append('category', category);
@@ -146,6 +149,9 @@ export default function AdminDashboard() {
       formData.append('description', description);
       images.forEach((image: any, index: number) => {
         formData.append(`images[${index}]`, image);
+      });
+      videos?.forEach((video: any, index: number) => {
+        formData.append(`videos[${index}]`, video);
       });
 
       const response = await fetch('/api/products/create-product', {
@@ -175,8 +181,8 @@ export default function AdminDashboard() {
 
   // Define mutateUpdate at the top level, using the latest id via closure
   const { mutate: updateProject, isLoading: isUpdatingProject } = useMutation(
-    async ({ product, id }: { product: { title: string; category: string; ar_title: string; description: string; ar_description: string; ar_category: string; ar_status: string; images: string[]; status: string }, id: string }) => {
-      const { title, category, ar_title, ar_description, ar_category, ar_status, description, images, status } = product;
+    async ({ product, id }: { product: { title: string; category: string; ar_title: string; description: string; ar_description: string; ar_category: string; ar_status: string; images: string[]; status: string; videos: string[] }, id: string }) => {
+      const { title, category, ar_title, ar_description, ar_category, ar_status, description, images, status, videos } = product;
       const formData = new FormData();
       formData.append('title', title);
       formData.append('category', category);
@@ -188,6 +194,9 @@ export default function AdminDashboard() {
       formData.append('description', description);
       images.forEach((image: any, index: number) => {
         formData.append(`images[${index}]`, image);
+      });
+      videos.forEach((video: any, index: number) => {
+        formData.append(`videos[${index}]`, video);
       });
 
       const response = await fetch(`/api/products/update-product/${id}`, {
@@ -315,7 +324,7 @@ export default function AdminDashboard() {
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
-          const product = await response.json();
+            const product = await response.json();
             setNewProject(prev => ({
             ...prev,
             title: product?.title || "",
@@ -324,9 +333,10 @@ export default function AdminDashboard() {
             ar_category: product?.ar_category || "",
             description: product?.description || "",
             ar_description: product?.ar_description || "",
-            images: product?.images || prev.images,
+            images: Array.isArray(product?.images) ? product.images : prev.images,
             status: product?.status || "draft",
             ar_status: product?.ar_status || "draft",
+            videos: Array.isArray(product?.videos) ? product.videos : prev.videos,
             }));
         } catch (error) {
           console.error(error);
@@ -476,18 +486,28 @@ export default function AdminDashboard() {
                   Manage your construction projects and portfolio
                 </CardDescription>
               </div>
-              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <Dialog open={isAddDialogOpen} onOpenChange={(open) => {
+                if (!open) {
+                  resetProjectForm();
+                } else {
+                  setIsAddDialogOpen(true);
+                }
+              }}>
                 <DialogTrigger asChild>
                   <Button className="bg-gradient-to-r from-purple-600  to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Project
+                    {
+                      id ? "Update Project" : "Add New Project"
+                    }
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[950px] my-11  bg-white dark:bg-background border-gray-200 dark:border-border">
                   <DialogHeader>
-                    <DialogTitle className="text-gray-900 dark:text-foreground">Add New Project</DialogTitle>
+                    <DialogTitle className="text-gray-900 dark:text-foreground">{id ? "Update Project" : "Add New Project"}</DialogTitle>
                     <DialogDescription className="text-gray-600 dark:text-muted-foreground">
-                      Create a new project entry for your portfolio
+                   {
+                    id ? "Update the project details below." : "Fill in the details to create a new project."
+                   }
                     </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4 grid-cols-2 py-4 ">
@@ -651,24 +671,42 @@ export default function AdminDashboard() {
                       ))}
                       </div>
                     </div>
+                      <div className="grid gap-2 grid-cols-1 ">
+                      <Label htmlFor="videos" className="text-gray-700 dark:text-gray-300">
+                      Project Videos
+                      </Label>
+                      <Input
+                      id="videos"
+                      type="file"
+                      multiple
+                      accept="video/*"
+                      onChange={(e) => {
+                        const files = Array.from(e.target.files || []);
+                        setNewProject({
+                        ...newProject,
+                        videos: files as any, 
+                        });
+                      }}
+                      className="border-gray-300 dark:border-border focus:border-purple-500 dark:focus:border-purple-400"
+                      />
+                      <div className="flex flex-wrap gap-2 mt-2">
+                      {Array.from(newProject.videos || []).map((file: any, idx: number) => (
+                        <div key={idx} className="w-12 h-12 rounded overflow-hidden border border-gray-200 dark:border-border">
+                        <video
+                          src={typeof file === "string" ? file : URL.createObjectURL(file)}
+                          className="object-cover w-full h-full"
+                          controls
+                        />
+                        </div>
+                      ))}
+                      </div>
+                    </div>
+
+                 
                   <div className="flex justify-end space-x-2">
                     <Button
                       variant="outline"
-                      onClick={() => {setIsAddDialogOpen(false)
-                        setNewProject(
-                          {
-                            title: "",
-                            ar_title: "",
-                            category: "",
-                            ar_category: "",
-                            description: "",
-                            ar_description: "",
-                            status: "",
-                            ar_status: "",
-                            images: [],
-                          }
-                        )
-                      }}  
+                      onClick={resetProjectForm}
                       className="border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-border dark:text-gray-300 dark:hover:bg-gray-800"
                     >
                       Cancel

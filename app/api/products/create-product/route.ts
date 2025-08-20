@@ -3,6 +3,7 @@ import { prisma } from "@/prisma/client";
 import { NextResponse } from "next/server";
 import { authenticateUser } from "@/lib/auth";
 import upload from "@/lib/upload";
+import uploadingVideos from "@/lib/videosUpload";
 import { Readable } from "stream";
 
 export async function POST(request: Request) {
@@ -40,6 +41,16 @@ export async function POST(request: Request) {
       }
     }
 
+    // Videos: collect all video files
+    const videos: File[] = [];
+    for (const [key, value] of formData.entries()) {
+      if (key.startsWith("videos")) {
+        if (value instanceof File && value.size > 0) {
+          videos.push(value);
+        }
+      }
+    }
+
     if (!title || !ar_title || !description || !ar_description || !category || !ar_category || !status || !ar_status) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
     }
@@ -54,6 +65,16 @@ export async function POST(request: Request) {
       imagesUrls = uploadedImages.map((image: any) => image.secure_url);
     }
 
+    // Convert Video File objects to Buffers for upload
+    const videoBuffers = await Promise.all(
+      videos.map(async (file) => Buffer.from(await file.arrayBuffer()))
+    );
+    let videosUrls: string[] = [];
+    if (videoBuffers.length > 0) {
+      const uploadedVideos = await uploadingVideos({ videos: videoBuffers });
+      videosUrls = uploadedVideos.map((video: any) => video.secure_url);
+    }
+
     const product = await prisma.product.create({
       data: {
         title,
@@ -65,7 +86,8 @@ export async function POST(request: Request) {
         status,
         ar_status,
         images: imagesUrls,
-      },
+        videos: videosUrls,
+      } as any,
     });
     return NextResponse.json({ message: "Product created successfully", product }, { status: 201 });
   } catch (err: any) {

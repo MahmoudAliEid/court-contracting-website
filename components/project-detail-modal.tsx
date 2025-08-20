@@ -9,6 +9,7 @@ import { Calendar, MapPin, User, Building, Clock, CheckCircle } from "lucide-rea
 import { useLanguage } from "@/components/language-provider"
 import { motion } from "framer-motion"
 import { useQuery } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
 
 interface Project {
   id: number
@@ -16,6 +17,7 @@ interface Project {
   ar_title?: string
   category: string
   images: string[]
+  videos?: string[]
   description: string
   ar_description?: string
   fullDescription?: string
@@ -37,6 +39,9 @@ interface ProjectDetailModalProps {
 export function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailModalProps) {
   const { language } = useLanguage()
   const [selectedImage, setSelectedImage] = useState(0)
+  const [selectedVideo, setSelectedVideo] = useState(0)
+  const [activeTab, setActiveTab] = useState<'images' | 'videos'>('images')
+  const router = useRouter()
        interface Status {
       id: string
       name: string
@@ -90,6 +95,7 @@ export function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailMo
       project.images[1] || "/placeholder.svg?height=400&width=600",
       project.images[2] || "/placeholder.svg?height=400&width=600",
     ],
+    videos: project.videos || [],
   }
 
   return (
@@ -168,42 +174,122 @@ export function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailMo
 
         <div className=" max-h-[calc(95vh-120px)] p-4 sm:p-6">
           <div className="space-y-6">
-            {/* Image Gallery */}
-            <div className="space-y-4">
-              <motion.div
-                key={selectedImage}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
-                className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden"
+            {/* Media Tabs */}
+            <div className={`flex gap-2 border-b border-gray-200 dark:border-border ${language === "ar" ? "flex-row-reverse" : "flex-row"}`}>
+              <button
+                onClick={() => setActiveTab('images')}
+                className={`px-4 py-2 font-medium transition-colors duration-200 border-b-2 ${
+                  activeTab === 'images'
+                    ? 'border-purple-500 text-purple-600 dark:text-purple-400'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                }`}
               >
-                <img
-                  src={projectDetails.gallery[selectedImage] || "/placeholder.svg"}
-                  alt={project.title}
-                  className="w-full h-full object-cover"
-                />
-              </motion.div>
+                {language === "ar" ? "الصور" : "Images"} ({projectDetails.gallery.length})
+              </button>
+              {projectDetails.videos.length > 0 && (
+                <button
+                  onClick={() => setActiveTab('videos')}
+                  className={`px-4 py-2 font-medium transition-colors duration-200 border-b-2 ${
+                    activeTab === 'videos'
+                      ? 'border-purple-500 text-purple-600 dark:text-purple-400'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                  }`}
+                >
+                  {language === "ar" ? "الفيديوهات" : "Videos"} ({projectDetails.videos.length})
+                </button>
+              )}
+            </div>
 
-              {/* Thumbnail Gallery */}
-              <div className={`flex gap-2 overflow-x-auto pb-2 ${language === "ar" ? "flex-row-reverse" : "flex-row"}`}>
-                {projectDetails.gallery.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedImage(index)}
-                    className={`flex-shrink-0 w-16 sm:w-20 h-12 sm:h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
-                      selectedImage === index
-                        ? "border-purple-500 ring-2 ring-purple-200 dark:ring-purple-800"
-                        : "border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600"
-                    }`}
+            {/* Media Gallery */}
+            <div className="space-y-4">
+              {/* Images Tab */}
+              {activeTab === 'images' && (
+                <>
+                  <motion.div
+                    key={selectedImage}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden"
                   >
                     <img
-                      src={image || "/placeholder.svg"}
-                      alt={`${project.title} ${index + 1}`}
+                      src={projectDetails.gallery[selectedImage] || "/placeholder.svg"}
+                      alt={project.title}
                       className="w-full h-full object-cover"
                     />
-                  </button>
-                ))}
-              </div>
+                  </motion.div>
+
+                  {/* Image Thumbnail Gallery */}
+                  <div className={`flex gap-2 overflow-x-auto pb-2 ${language === "ar" ? "flex-row-reverse" : "flex-row"}`}>
+                    {projectDetails.gallery.map((image, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedImage(index)}
+                        className={`flex-shrink-0 w-16 sm:w-20 h-12 sm:h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                          selectedImage === index
+                            ? "border-purple-500 ring-2 ring-purple-200 dark:ring-purple-800"
+                            : "border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600"
+                        }`}
+                      >
+                        <img
+                          src={image || "/placeholder.svg"}
+                          alt={`${project.title} ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {/* Videos Tab */}
+              {activeTab === 'videos' && projectDetails.videos.length > 0 && (
+                <>
+                  <motion.div
+                    key={selectedVideo}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="aspect-[9/16] max-w-md mx-auto bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden"
+                  >
+                    <video
+                      src={projectDetails.videos[selectedVideo]}
+                      controls
+                      className="w-full h-full object-cover"
+                      preload="metadata"
+                    >
+                      {language === "ar" ? "متصفحك لا يدعم تشغيل الفيديو." : "Your browser does not support the video tag."}
+                    </video>
+                  </motion.div>
+
+                  {/* Video Thumbnail Gallery */}
+                  <div className={`flex gap-2 overflow-x-auto pb-2 justify-center ${language === "ar" ? "flex-row-reverse" : "flex-row"}`}>
+                    {projectDetails.videos.map((video, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedVideo(index)}
+                        className={`relative flex-shrink-0 w-12 sm:w-16 h-16 sm:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                          selectedVideo === index
+                            ? "border-purple-500 ring-2 ring-purple-200 dark:ring-purple-800"
+                            : "border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600"
+                        }`}
+                      >
+                        <video
+                          src={video}
+                          className="w-full h-full object-cover"
+                          preload="metadata"
+                        />
+                        {/* Play icon overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                          <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
+                            <div className="w-0 h-0 border-l-2 border-l-gray-800 border-y-[3px] border-y-transparent ml-[1px]"></div>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Project Info Grid */}
@@ -241,23 +327,7 @@ export function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailMo
                 </div>
               </div> */}
 
-              {/* Project Features */}
-              <div className={`space-y-4 ${language === "ar" ? "text-right" : "text-left"}`}>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-foreground">
-                  {language === "ar" ? "مميزات المشروع" : "Project Features"}
-                </h3>
-                <div className="space-y-2">
-                  {projectDetails.features.map((feature, index) => (
-                    <div
-                      key={index}
-                      className={`flex items-center gap-2 ${language === "ar" ? "flex-row-reverse" : "flex-row"}`}
-                    >
-                      <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0" />
-                      <span className="text-sm text-gray-600 dark:text-gray-300">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              
             </div>
 
             <Separator className="bg-gray-200 dark:bg-border" />
@@ -280,7 +350,7 @@ export function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailMo
                 onClick={() => {
                   // Navigate to contact form
                   onClose()
-                  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
+                  router.push("/#contact")
                 }}
               >
                 <Building className={`w-4 h-4 ${language === "ar" ? "ml-2" : "mr-2"}`} />
